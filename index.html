@@ -4,139 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vynxgram</title>
-    <!-- Phosphor Icons para estética moderna -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            /* Cores Vynxgram */
-            --primary: #BFA7FF;
-            --primary-hover: #9878E8;
-            --primary-active: #6545A8;
-            --bg-dark: #17131F;
-            --bg-surface: #211B2C;
-            --bg-surface-hover: #2D253B;
-            --bg-chat: #13101A;
-            --text-main: #F4F0FA;
-            --text-muted: #A39DB0;
-            --danger: #FF6B6B;
-            --success: #51CF66;
+            --primary: #BFA7FF; --primary-hover: #9878E8; --primary-active: #6545A8;
+            --bg-dark: #0A0A0A; /* Escurecido para o Grid Premium */
+            --bg-surface: rgba(33, 27, 44, 0.65); /* Glassmorphism Base */
+            --bg-surface-solid: #211B2C;
+            --bg-surface-hover: rgba(45, 37, 59, 0.8);
+            --bg-chat: #13101A; --text-main: #F4F0FA; --text-muted: #A39DB0;
+            --danger: #FF6B6B; --success: #51CF66;
             --border: rgba(255, 255, 255, 0.08);
-            
-            /* Tamanhos */
-            --sidebar-left-width: 260px;
-            --sidebar-right-width: 240px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
+            --sidebar-left-width: 260px; --sidebar-right-width: 240px;
+            --radius-md: 12px; --radius-lg: 16px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-        }
-
-        /* --- UTILITÁRIOS --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-chat); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; }
+        
         .hidden { display: none !important; }
-        .flex { display: flex; }
-        .flex-col { display: flex; flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
+        .flex { display: flex; } .flex-col { display: flex; flex-direction: column; }
         .scrollable { overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--bg-surface-hover) transparent; }
         .scrollable::-webkit-scrollbar { width: 6px; }
         .scrollable::-webkit-scrollbar-thumb { background: var(--bg-surface-hover); border-radius: 4px; }
-
         button { cursor: pointer; border: none; outline: none; background: transparent; color: inherit; font-family: inherit; }
         input, select { font-family: inherit; outline: none; }
 
-        /* --- ECRÃ DE AUTENTICAÇÃO --- */
+        /* --- UI PREMIUM: ORIGIN KIT KINETIC GRID --- */
         #auth-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(135deg, var(--bg-dark), var(--bg-surface));
-            z-index: 1000;
+            background-color: var(--bg-dark);
+            z-index: 1000; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .kinetic-grid {
+            position: absolute; top: 0; left: 0; width: 200vw; height: 200vh;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px) translateZ(-200px); } }
+        .grid-hole {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(191,167,255,0.15) 0%, transparent 60%);
+            filter: blur(50px); z-index: 1; pointer-events: none;
         }
         .auth-card {
-            background: var(--bg-surface);
-            padding: 40px; border-radius: var(--radius-lg);
-            width: 100%; max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
+            position: relative; z-index: 2;
+            background: rgba(20, 15, 25, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 40px; border-radius: var(--radius-lg); width: 100%; max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05); text-align: center;
         }
-        .auth-card h1 { color: var(--primary); margin-bottom: 24px; font-size: 28px; }
+        .auth-card h1 { color: var(--primary); margin-bottom: 24px; font-size: 32px; letter-spacing: -1px; }
         .auth-form { display: flex; flex-direction: column; gap: 16px; }
         .auth-input {
             padding: 14px 16px; border-radius: var(--radius-md);
-            background: var(--bg-dark); border: 1px solid var(--border);
-            color: var(--text-main); font-size: 15px; transition: 0.2s;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            color: var(--text-main); font-size: 15px; transition: 0.3s ease;
         }
-        .auth-input:focus { border-color: var(--primary); }
+        .auth-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(191,167,255,0.2); }
         .btn-primary {
             background: var(--primary); color: var(--bg-dark);
             padding: 14px; border-radius: var(--radius-md);
-            font-weight: 600; font-size: 16px; transition: 0.2s;
+            font-weight: 600; font-size: 16px; transition: 0.2s; box-shadow: 0 4px 14px rgba(191,167,255,0.3);
         }
-        .btn-primary:hover { background: var(--primary-hover); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(191,167,255,0.4); }
         .auth-toggle { margin-top: 20px; color: var(--text-muted); font-size: 14px; cursor: pointer; }
         .auth-toggle:hover { color: var(--primary); }
         #auth-error { color: var(--danger); margin-bottom: 10px; font-size: 14px; display: none; }
 
-        /* --- LAYOUT DA APLICAÇÃO --- */
+        /* --- MAIN APP --- */
         #app-layout { width: 100vw; height: 100vh; }
-
-        /* Barra Esquerda (Servidores) */
-        .sidebar {
-            width: 72px; background: var(--bg-dark);
-            border-right: 1px solid var(--border);
-            align-items: center; padding: 12px 0; gap: 12px;
-            z-index: 10;
-        }
-        .server-icon {
-            width: 48px; height: 48px; border-radius: 24px;
-            background: var(--bg-surface); display: flex; justify-content: center; align-items: center;
-            font-size: 20px; font-weight: bold; color: var(--primary);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative; cursor: pointer;
-        }
-        .server-icon:hover, .server-icon.active {
-            border-radius: 16px; background: var(--primary); color: var(--bg-dark);
-        }
+        .sidebar { width: 72px; background: var(--bg-dark); border-right: 1px solid var(--border); align-items: center; padding: 12px 0; gap: 12px; z-index: 10; }
+        .server-icon { width: 48px; height: 48px; border-radius: 24px; background: var(--bg-surface-solid); display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; color: var(--primary); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .server-icon:hover, .server-icon.active { border-radius: 16px; background: var(--primary); color: var(--bg-dark); }
         .server-icon.brand { background: transparent; color: var(--primary); font-size: 32px; margin-bottom: 8px;}
         .server-icon.brand:hover { border-radius: 24px; background: transparent; transform: scale(1.1); }
         .separator { width: 32px; height: 2px; background: var(--border); border-radius: 2px; }
 
-        /* Barra do Meio (Canais) */
-        .channels-sidebar {
-            width: 240px; background: var(--bg-surface);
-            border-right: 1px solid var(--border);
-        }
-        .sidebar-header {
-            height: 60px; padding: 0 16px; border-bottom: 1px solid var(--border);
-            font-weight: 600; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            display: flex; align-items: center; justify-content: space-between;
-        }
+        .channels-sidebar { width: 240px; background: var(--bg-surface-solid); border-right: 1px solid var(--border); }
+        .sidebar-header { height: 60px; padding: 0 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 16px; display: flex; align-items: center; }
         .channel-list { padding: 12px 8px; flex: 1; }
-        .channel-item {
-            padding: 8px 12px; border-radius: 6px; margin-bottom: 4px;
-            color: var(--text-muted); display: flex; align-items: center; gap: 10px;
-            transition: 0.1s; cursor: pointer; font-size: 15px;
-        }
+        .channel-item { padding: 8px 12px; border-radius: 6px; margin-bottom: 4px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; transition: 0.1s; cursor: pointer; font-size: 15px; }
         .channel-item:hover { background: var(--bg-surface-hover); color: var(--text-main); }
         .channel-item.active { background: var(--bg-surface-hover); color: var(--primary); font-weight: 500; }
         
-        /* Controlos de Utilizador (Baixo) */
-        .user-controls {
-            padding: 12px 16px; background: var(--bg-dark);
-            border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px;
-        }
+        .user-controls { padding: 12px 16px; background: var(--bg-dark); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
         .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--bg-dark); font-weight: bold; overflow: hidden;}
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .user-info { flex: 1; overflow: hidden; }
@@ -145,17 +103,11 @@
         .settings-btn { color: var(--text-muted); padding: 6px; border-radius: 6px; }
         .settings-btn:hover { background: var(--bg-surface-hover); color: var(--text-main); }
 
-        /* Área de Chat */
         .chat-area { flex: 1; background: var(--bg-chat); position: relative; }
-        .chat-header {
-            height: 60px; padding: 0 20px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            background: var(--bg-surface);
-        }
+        .chat-header { height: 60px; padding: 0 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface-solid); }
         .chat-title { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; }
-        .chat-messages { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth;}
+        .chat-messages { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth;}
         
-        /* Mensagens */
         .message { display: flex; gap: 12px; max-width: 85%; }
         .message.self { align-self: flex-end; flex-direction: row-reverse; }
         .msg-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-surface-hover); display: flex; justify-content: center; align-items: center; color: var(--text-muted); flex-shrink:0; overflow: hidden;}
@@ -166,85 +118,53 @@
         .msg-author { font-weight: 600; color: var(--primary); }
         .message.self .msg-author { display: none; }
         .msg-time { color: var(--text-muted); font-size: 11px; }
-        .msg-bubble {
-            background: var(--bg-surface); padding: 10px 14px;
-            border-radius: 16px 16px 16px 4px; font-size: 15px; line-height: 1.4;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2); word-wrap: break-word; white-space: pre-wrap;
-        }
+        .msg-bubble { background: var(--bg-surface-solid); padding: 10px 14px; border-radius: 16px 16px 16px 4px; font-size: 15px; line-height: 1.4; box-shadow: 0 1px 2px rgba(0,0,0,0.2); word-wrap: break-word; white-space: pre-wrap; }
         .message.self .msg-bubble { background: var(--primary-active); border-radius: 16px 16px 4px 16px; }
 
-        /* Área de Input */
+        /* EMBEDS DE ARQUIVOS */
+        .msg-attachment { margin-top: 8px; max-width: 400px; border-radius: 8px; overflow: hidden; background: var(--bg-dark); border: 1px solid var(--border); }
+        .msg-attachment img, .msg-attachment video { width: 100%; max-height: 300px; object-fit: cover; display: block; }
+        .msg-attachment-file { display: flex; align-items: center; gap: 12px; padding: 12px; text-decoration: none; color: var(--text-main); }
+        .msg-attachment-file:hover { background: var(--bg-surface-hover); }
+        .msg-attachment-file i { font-size: 24px; color: var(--primary); }
+
         .chat-input-wrapper { padding: 0 20px 24px 20px; background: transparent; }
-        .chat-input-box {
-            background: var(--bg-surface); border-radius: var(--radius-lg);
-            display: flex; align-items: center; padding: 8px 16px; gap: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid var(--border);
-        }
-        .chat-input-box input {
-            flex: 1; background: transparent; border: none; color: var(--text-main);
-            font-size: 15px; padding: 8px 0;
-        }
+        .chat-input-box { background: var(--bg-surface-solid); border-radius: var(--radius-lg); display: flex; align-items: center; padding: 8px 16px; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid var(--border); }
+        .chat-input-box input[type="text"] { flex: 1; background: transparent; border: none; color: var(--text-main); font-size: 15px; padding: 8px 0; }
         .chat-input-box input::placeholder { color: var(--text-muted); }
-        .action-btn { color: var(--text-muted); font-size: 22px; transition: 0.2s; }
+        .action-btn { color: var(--text-muted); font-size: 22px; transition: 0.2s; position: relative; }
         .action-btn:hover { color: var(--primary); transform: scale(1.1); }
-        
-        /* Barra Direita (Membros) */
-        .members-sidebar {
-            width: var(--sidebar-right-width); background: var(--bg-surface);
-            border-left: 1px solid var(--border);
-            display: flex; flex-direction: column;
-        }
-        .members-header {
-            height: 60px; padding: 0 16px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; font-weight: 600; font-size: 15px;
-        }
+        .upload-progress { position: absolute; top: -30px; left: 0; background: var(--primary); color: var(--bg-dark); padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: none;}
+
+        .members-sidebar { width: var(--sidebar-right-width); background: var(--bg-surface-solid); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+        .members-header { height: 60px; padding: 0 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; font-weight: 600; font-size: 15px; }
         .member-list { padding: 12px 8px; flex: 1; }
-        .member-item {
-            padding: 8px 12px; border-radius: 6px; margin-bottom: 4px;
-            display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.1s;
-        }
+        .member-item { padding: 8px 12px; border-radius: 6px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.1s; }
         .member-item:hover { background: var(--bg-surface-hover); }
         .member-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: var(--bg-dark); font-weight: bold; overflow: hidden; flex-shrink: 0; }
         .member-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .member-info { display: flex; flex-direction: column; overflow: hidden; flex: 1; }
         .member-name { font-size: 14px; font-weight: 500; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-        .member-status-text { font-size: 11px; color: var(--text-muted); white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--success); margin-left: auto; border: 2px solid var(--bg-surface); flex-shrink: 0; }
-        .status-dot.Offline { background: var(--text-muted); }
-        .status-dot.Idle { background: #FAB005; }
-        .status-dot.Do\ Not\ Disturb { background: var(--danger); }
+        .member-status-text { font-size: 11px; color: var(--text-muted); }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--success); margin-left: auto; border: 2px solid var(--bg-surface-solid); flex-shrink: 0; }
+        .status-dot.Offline { background: var(--text-muted); } .status-dot.Idle { background: #FAB005; } .status-dot.Do\ Not\ Disturb { background: var(--danger); }
 
-        /* Janela Modal de Perfil */
-        .profile-banner { height: 100px; background: var(--primary); border-radius: 8px 8px 0 0; margin: -24px -24px 0 -24px; position: relative;}
-        .profile-modal-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--bg-dark); border: 4px solid var(--bg-surface); position: absolute; bottom: -40px; left: 24px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--primary); overflow: hidden;}
-        .profile-modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-details { margin-top: 50px; }
-        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-        .profile-username { color: var(--text-muted); margin-bottom: 16px; font-size: 14px; }
-        .profile-bio-box { background: var(--bg-dark); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
-
-        /* Modal Base */
-        .modal-overlay {
-            position: fixed; top:0; left:0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-            z-index: 2000; display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: 0.2s;
-        }
+        /* Modais */
+        .modal-overlay { position: fixed; top:0; left:0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.2s; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content {
-            background: var(--bg-surface); width: 100%; max-width: 450px;
-            border-radius: var(--radius-lg); padding: 24px; transform: translateY(20px); transition: 0.2s; position: relative;
-        }
+        .modal-content { background: var(--bg-surface-solid); width: 100%; max-width: 450px; border-radius: var(--radius-lg); padding: 24px; transform: translateY(20px); transition: 0.2s; position: relative; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.5);}
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
-        .modal-header h2 { font-size: 20px; }
         .modal-close { font-size: 24px; color: var(--text-muted); background: transparent; border: none; cursor: pointer;}
         .modal-close:hover { color: var(--danger); }
-        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-        .form-group label { font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;}
-        .form-input { padding: 12px; border-radius: 8px; background: var(--bg-dark); border: 1px solid var(--border); color: white; width: 100%; box-sizing: border-box;}
+        .form-input { padding: 12px; border-radius: 8px; background: var(--bg-dark); border: 1px solid var(--border); color: white; width: 100%; box-sizing: border-box; margin-bottom: 16px;}
         
-        /* Responsivo */
+        .profile-banner { height: 100px; background: linear-gradient(135deg, var(--primary), var(--primary-active)); border-radius: 8px 8px 0 0; margin: -24px -24px 0 -24px; position: relative;}
+        .profile-modal-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--bg-dark); border: 4px solid var(--bg-surface-solid); position: absolute; bottom: -40px; left: 24px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--primary); overflow: hidden;}
+        .profile-modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-details { margin-top: 50px; }
+        .profile-bio-box { background: var(--bg-dark); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; border: 1px solid rgba(255,255,255,0.05); }
+        
         @media (max-width: 768px) {
             .channels-sidebar { position: fixed; left: 72px; height: 100vh; transform: translateX(-100%); transition: 0.3s; z-index: 5; }
             .channels-sidebar.open { transform: translateX(0); box-shadow: 10px 0 20px rgba(0,0,0,0.5);}
@@ -255,8 +175,10 @@
 </head>
 <body>
 
-    <!-- ECRÃ DE AUTENTICAÇÃO -->
-    <div id="auth-screen" class="flex justify-center items-center">
+    <!-- TELA DE AUTENTICAÇÃO PREMIUM -->
+    <div id="auth-screen">
+        <div class="kinetic-grid"></div>
+        <div class="grid-hole"></div>
         <div class="auth-card">
             <h1>Vynxgram</h1>
             <div id="auth-error"></div>
@@ -271,153 +193,100 @@
             <div id="register-form" class="auth-form hidden">
                 <input type="text" id="reg-user" class="auth-input" placeholder="Nome de utilizador (Único)" autocomplete="off">
                 <input type="password" id="reg-pass" class="auth-input" placeholder="Palavra-passe">
-                <button class="btn-primary" onclick="register()">Criar Conta</button>
+                <button class="btn-primary" onclick="register()">Criar Conta Premium</button>
                 <div class="auth-toggle" onclick="toggleAuth('login')">Já tens conta? Entrar</div>
             </div>
         </div>
     </div>
 
-    <!-- APLICAÇÃO PRINCIPAL -->
+    <!-- APLICAÇÃO -->
     <div id="app-layout" class="flex hidden">
-        
-        <!-- Barra Esquerda (Servidores) -->
         <div class="sidebar flex-col scrollable" id="servers-list">
-            <div class="server-icon brand" title="Vynxgram Home">
-                <i class="ph-fill ph-planet"></i>
-            </div>
+            <div class="server-icon brand" title="Vynxgram Home"><i class="ph-fill ph-planet"></i></div>
             <div class="separator"></div>
-            <!-- Servidores Injetados Aqui -->
         </div>
 
-        <!-- Barra Central (Canais) -->
         <div class="channels-sidebar flex-col" id="channels-sidebar">
-            <div class="sidebar-header" id="current-server-name">
-                Global Community
-            </div>
-            <div class="channel-list scrollable flex-col" id="channels-list">
-                <!-- Canais Injetados Aqui -->
-            </div>
+            <div class="sidebar-header" id="current-server-name">Global Community</div>
+            <div class="channel-list scrollable flex-col" id="channels-list"></div>
             <div class="user-controls">
                 <div class="avatar" id="my-avatar">V</div>
                 <div class="user-info">
                     <div class="user-name" id="my-name">Utilizador</div>
                     <div class="user-status" id="my-status">Online</div>
                 </div>
-                <button class="settings-btn" onclick="openSettings()">
-                    <i class="ph-bold ph-gear"></i>
-                </button>
+                <button class="settings-btn" onclick="openSettings()"><i class="ph-bold ph-gear"></i></button>
             </div>
         </div>
 
-        <!-- Área Central de Chat -->
         <div class="chat-area flex-col">
             <div class="chat-header">
                 <div class="chat-title">
                     <i class="ph-bold ph-list" id="mobile-menu" style="display:none;" onclick="document.getElementById('channels-sidebar').classList.toggle('open')"></i>
-                    <i class="ph-bold ph-hash"></i>
-                    <span id="current-channel-name">geral</span>
-                </div>
-                <div class="header-actions">
-                    <button class="action-btn"><i class="ph-bold ph-magnifying-glass"></i></button>
+                    <i class="ph-bold ph-hash"></i><span id="current-channel-name">geral</span>
                 </div>
             </div>
             
-            <div class="chat-messages scrollable" id="chat-messages">
-                <!-- Mensagens Injetadas Aqui -->
-            </div>
+            <div class="chat-messages scrollable" id="chat-messages"></div>
 
             <div class="chat-input-wrapper">
                 <div class="chat-input-box">
-                    <button class="action-btn"><i class="ph-bold ph-plus-circle"></i></button>
+                    <input type="file" id="file-input" style="display: none;" onchange="handleFileUpload(event)">
+                    <button class="action-btn" onclick="document.getElementById('file-input').click()">
+                        <i class="ph-bold ph-plus-circle"></i>
+                        <span class="upload-progress" id="upload-status">Enviando...</span>
+                    </button>
                     <input type="text" id="msg-input" placeholder="Mensagem #geral" onkeypress="handleKeyPress(event)">
                     <button class="action-btn" onclick="sendMessage()"><i class="ph-bold ph-paper-plane-right"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- Barra Direita (Membros) -->
         <div class="members-sidebar hidden-mobile" id="members-sidebar">
-            <div class="members-header">
-                Membros da Comunidade
-            </div>
-            <div class="member-list scrollable" id="members-list">
-                <!-- Membros dinâmicos serão injetados aqui -->
-            </div>
+            <div class="members-header">Membros da Comunidade</div>
+            <div class="member-list scrollable" id="members-list"></div>
         </div>
     </div>
 
-    <!-- MODAL DE DEFINIÇÕES -->
+    <!-- MODAIS SÃO IGUAIS AO ANTERIOR -->
     <div class="modal-overlay" id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Definições do Utilizador</h2>
                 <button class="modal-close" onclick="closeSettings()"><i class="ph-bold ph-x"></i></button>
             </div>
-            <div class="form-group">
-                <label>URL do Avatar (Imagem)</label>
-                <input type="text" id="set-avatar" class="form-input" placeholder="https://link-da-sua-imagem.com/foto.jpg">
-            </div>
-            <div class="form-group">
-                <label>Nome de Exibição</label>
-                <input type="text" id="set-display-name" class="form-input">
-            </div>
-            <div class="form-group">
-                <label>Biografia</label>
-                <input type="text" id="set-bio" class="form-input">
-            </div>
-            <div class="form-group">
-                <label>Status</label>
-                <select id="set-status" class="form-input">
-                    <option value="Online">Online</option>
-                    <option value="Idle">Ausente</option>
-                    <option value="Do Not Disturb">Não Incomodar</option>
-                </select>
-            </div>
-            <div class="flex justify-between" style="margin-top: 24px;">
+            <input type="text" id="set-avatar" class="form-input" placeholder="URL da Imagem de Avatar">
+            <input type="text" id="set-display-name" class="form-input" placeholder="Nome de Exibição">
+            <input type="text" id="set-bio" class="form-input" placeholder="Biografia">
+            <select id="set-status" class="form-input">
+                <option value="Online">Online</option> <option value="Idle">Ausente</option> <option value="Do Not Disturb">Não Incomodar</option>
+            </select>
+            <div class="flex justify-between">
                 <button class="btn-primary" style="background: var(--danger); width: 45%;" onclick="logout()">Sair</button>
                 <button class="btn-primary" style="width: 45%;" onclick="saveSettings()">Salvar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DO PERFIL DO UTILIZADOR -->
     <div class="modal-overlay" id="profile-modal">
         <div class="modal-content">
-            <div class="modal-header" style="position: absolute; right: 16px; top: 16px; z-index: 10; margin-bottom: 0;">
-                <button class="modal-close" onclick="closeProfile()"><i class="ph-bold ph-x" style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"></i></button>
-            </div>
-            <div class="profile-banner">
-                <div class="profile-modal-avatar" id="prof-avatar">U</div>
-            </div>
+            <div class="modal-header" style="position: absolute; right: 16px; top: 16px; z-index: 10;"><button class="modal-close" onclick="closeProfile()"><i class="ph-bold ph-x" style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"></i></button></div>
+            <div class="profile-banner"><div class="profile-modal-avatar" id="prof-avatar">U</div></div>
             <div class="profile-details">
-                <div class="profile-name" id="prof-name">Nome do Utilizador</div>
-                <div class="profile-username" id="prof-username">@username</div>
-                <div class="form-group">
-                    <label>Sobre mim</label>
-                    <div class="profile-bio-box" id="prof-bio">Nenhuma biografia definida.</div>
-                </div>
-                <div class="form-group">
-                    <label>Status Atual</label>
-                    <div class="profile-bio-box" id="prof-status">Online</div>
-                </div>
+                <h2 id="prof-name">Nome</h2>
+                <div style="color:var(--text-muted); margin-bottom:16px;" id="prof-username">@username</div>
+                <div class="profile-bio-box" id="prof-bio">Nenhuma biografia definida.</div>
+                <div class="profile-bio-box" id="prof-status">Online</div>
             </div>
         </div>
     </div>
 
-    <!-- CLIENTE SOCKET.IO & LÓGICA -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // --- ESTADO DA APP ---
-        let currentUser = null;
-        let currentServer = null;
-        let currentChannel = null;
-        let socket = null;
+        let currentUser = null, currentServer = null, currentChannel = null, socket = null;
 
-        // --- INICIALIZAÇÃO ---
         document.addEventListener('DOMContentLoaded', async () => {
-            if (window.innerWidth <= 768) {
-                document.getElementById('mobile-menu').style.display = 'block';
-            }
+            if (window.innerWidth <= 768) document.getElementById('mobile-menu').style.display = 'block';
             await checkAuth();
         });
 
@@ -425,331 +294,178 @@
             const options = { method, headers: { 'Content-Type': 'application/json' } };
             if (body) options.body = JSON.stringify(body);
             const res = await fetch(endpoint, options);
-            if (!res.ok) {
-                const data = await res.json().catch(()=>({}));
-                throw new Error(data.error || 'Erro na API');
-            }
+            if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'Erro na API');
             return res.json();
         }
 
         async function checkAuth() {
-            try {
-                const data = await api('/api/me');
-                if (data.user) {
-                    currentUser = data.user;
-                    showApp();
-                    initApp();
-                } else {
-                    document.getElementById('auth-screen').classList.remove('hidden');
-                }
-            } catch (err) {
-                document.getElementById('auth-screen').classList.remove('hidden');
-            }
+            try { const data = await api('/api/me'); if (data.user) { currentUser = data.user; showApp(); initApp(); } else { document.getElementById('auth-screen').classList.remove('hidden'); } } 
+            catch { document.getElementById('auth-screen').classList.remove('hidden'); }
         }
 
-        // --- LÓGICA DE AUTENTICAÇÃO ---
         function toggleAuth(type) {
             document.getElementById('login-form').classList.toggle('hidden', type !== 'login');
             document.getElementById('register-form').classList.toggle('hidden', type !== 'register');
             document.getElementById('auth-error').style.display = 'none';
         }
-
-        function showError(msg) {
-            const el = document.getElementById('auth-error');
-            el.textContent = msg;
-            el.style.display = 'block';
-        }
+        function showError(msg) { const el = document.getElementById('auth-error'); el.textContent = msg; el.style.display = 'block'; }
 
         async function login() {
-            const u = document.getElementById('login-user').value;
-            const p = document.getElementById('login-pass').value;
-            try {
-                const res = await api('/api/login', 'POST', { username: u, password: p });
-                currentUser = res.user;
-                showApp();
-                initApp();
-            } catch (e) { showError(e.message); }
+            try { const res = await api('/api/login', 'POST', { username: document.getElementById('login-user').value, password: document.getElementById('login-pass').value });
+                currentUser = res.user; showApp(); initApp(); } catch (e) { showError(e.message); }
         }
-
         async function register() {
-            const u = document.getElementById('reg-user').value;
-            const p = document.getElementById('reg-pass').value;
-            try {
-                const res = await api('/api/register', 'POST', { username: u, password: p });
-                currentUser = res.user;
-                showApp();
-                initApp();
-            } catch (e) { showError(e.message); }
+            try { const res = await api('/api/register', 'POST', { username: document.getElementById('reg-user').value, password: document.getElementById('reg-pass').value });
+                currentUser = res.user; showApp(); initApp(); } catch (e) { showError(e.message); }
         }
+        async function logout() { await api('/api/logout', 'POST'); location.reload(); }
 
-        async function logout() {
-            await api('/api/logout', 'POST');
-            location.reload();
-        }
-
-        // --- LÓGICA PRINCIPAL ---
         function showApp() {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('app-layout').classList.remove('hidden');
-            
-            // Popular informações do utilizador
             document.getElementById('my-name').textContent = currentUser.display_name;
             updateAvatarEl('my-avatar', currentUser.avatar, currentUser.display_name);
             document.getElementById('my-status').textContent = currentUser.status || 'Online';
         }
 
-        // Ajudantes para o Avatar
-        function updateAvatarEl(elementId, avatarUrl, fallbackName) {
-            const el = document.getElementById(elementId);
-            if (!el) return;
-            if (avatarUrl && avatarUrl.startsWith('http')) {
-                el.innerHTML = `<img src="${escapeHTML(avatarUrl)}" alt="Avatar">`;
-            } else {
-                el.textContent = fallbackName ? fallbackName.charAt(0).toUpperCase() : 'U';
-            }
-        }
-
-        function renderAvatarHTML(avatarUrl, fallbackName) {
-            if (avatarUrl && avatarUrl.startsWith('http')) {
-                return `<img src="${escapeHTML(avatarUrl)}" alt="Avatar">`;
-            }
-            return fallbackName ? escapeHTML(fallbackName.charAt(0).toUpperCase()) : 'U';
+        function updateAvatarEl(id, url, fallback) {
+            const el = document.getElementById(id); if(!el) return;
+            el.innerHTML = url ? `<img src="${escapeHTML(url)}" alt="Avatar">` : (fallback ? fallback.charAt(0).toUpperCase() : 'U');
         }
 
         async function initApp() {
-            socket = io();
-            socket.on('new_message', appendMessage);
-            socket.on('user_status', updateMemberStatus);
-            
-            const servers = await api('/api/servers');
-            renderServers(servers);
-            if (servers.length > 0) {
-                selectServer(servers[0]);
-            }
+            socket = io(); socket.on('new_message', appendMessage); socket.on('user_status', updateMemberStatus);
+            const servers = await api('/api/servers'); renderServers(servers);
+            if (servers.length > 0) selectServer(servers[0]);
         }
 
         function renderServers(servers) {
             const list = document.getElementById('servers-list');
-            list.innerHTML = `
-                <div class="server-icon brand" title="Vynxgram Home"><i class="ph-fill ph-planet"></i></div>
-                <div class="separator"></div>
-            `;
+            list.innerHTML = `<div class="server-icon brand" title="Home"><i class="ph-fill ph-planet"></i></div><div class="separator"></div>`;
             servers.forEach(s => {
-                const el = document.createElement('div');
-                el.className = 'server-icon';
-                el.textContent = s.name.charAt(0);
-                el.title = s.name;
-                el.onclick = () => {
-                    document.querySelectorAll('.server-icon').forEach(i => i.classList.remove('active'));
-                    el.classList.add('active');
-                    selectServer(s);
-                };
+                const el = document.createElement('div'); el.className = 'server-icon'; el.textContent = s.name.charAt(0);
+                el.onclick = () => { document.querySelectorAll('.server-icon').forEach(i => i.classList.remove('active')); el.classList.add('active'); selectServer(s); };
                 list.appendChild(el);
             });
             if(list.children[2]) list.children[2].classList.add('active');
         }
 
         async function selectServer(server) {
-            currentServer = server;
-            document.getElementById('current-server-name').textContent = server.name;
-            const channels = await api(`/api/servers/${server.id}/channels`);
-            
-            const list = document.getElementById('channels-list');
-            list.innerHTML = '';
+            currentServer = server; document.getElementById('current-server-name').textContent = server.name;
+            const channels = await api(`/api/servers/${server._id || server.id}/channels`);
+            const list = document.getElementById('channels-list'); list.innerHTML = '';
             channels.forEach((c, index) => {
-                const el = document.createElement('div');
-                el.className = 'channel-item';
-                el.innerHTML = `<i class="ph-bold ph-hash"></i> ${c.name}`;
-                el.onclick = () => {
-                    document.querySelectorAll('.channel-item').forEach(i => i.classList.remove('active'));
-                    el.classList.add('active');
-                    selectChannel(c);
-                    if(window.innerWidth <= 768) document.getElementById('channels-sidebar').classList.remove('open');
-                };
-                list.appendChild(el);
-                if (index === 0) {
-                    el.classList.add('active');
-                    selectChannel(c);
-                }
+                const el = document.createElement('div'); el.className = 'channel-item'; el.innerHTML = `<i class="ph-bold ph-hash"></i> ${c.name}`;
+                el.onclick = () => { document.querySelectorAll('.channel-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); selectChannel(c); if(window.innerWidth <= 768) document.getElementById('channels-sidebar').classList.remove('open'); };
+                list.appendChild(el); if (index === 0) { el.classList.add('active'); selectChannel(c); }
             });
-
-            // Carrega os membros na barra direita
-            loadMembers(server.id);
+            loadMembers(server._id || server.id);
         }
 
         async function loadMembers(serverId) {
-            try {
-                const members = await api(`/api/servers/${serverId}/members`);
-                const list = document.getElementById('members-list');
-                list.innerHTML = '';
-                
-                members.forEach(m => {
-                    const el = document.createElement('div');
-                    el.className = 'member-item';
-                    el.id = `member-${m.id}`;
-                    el.onclick = () => openProfile(m.id);
-                    
-                    const avatarContent = renderAvatarHTML(m.avatar, m.display_name);
-                    
-                    el.innerHTML = `
-                        <div class="member-avatar">${avatarContent}</div>
-                        <div class="member-info">
-                            <span class="member-name">${escapeHTML(m.display_name)}</span>
-                            <span class="member-status-text">${escapeHTML(m.status || 'Offline')}</span>
-                        </div>
-                        <div class="status-dot ${m.status || 'Offline'}"></div>
-                    `;
-                    list.appendChild(el);
-                });
-            } catch (err) {
-                console.error("Erro ao carregar membros", err);
-            }
+            const members = await api(`/api/servers/${serverId}/members`);
+            const list = document.getElementById('members-list'); list.innerHTML = '';
+            members.forEach(m => {
+                const el = document.createElement('div'); el.className = 'member-item'; el.id = `member-${m._id || m.id}`; el.onclick = () => openProfile(m._id || m.id);
+                el.innerHTML = `<div class="member-avatar">${m.avatar ? `<img src="${escapeHTML(m.avatar)}">` : escapeHTML(m.display_name.charAt(0))}</div><div class="member-info"><span class="member-name">${escapeHTML(m.display_name)}</span><span class="member-status-text">${escapeHTML(m.status || 'Offline')}</span></div><div class="status-dot ${m.status || 'Offline'}"></div>`;
+                list.appendChild(el);
+            });
         }
-
         function updateMemberStatus(data) {
-            const memberEl = document.getElementById(`member-${data.userId}`);
-            if (memberEl) {
-                const statusDot = memberEl.querySelector('.status-dot');
-                const statusText = memberEl.querySelector('.member-status-text');
-                
-                if (statusDot) {
-                    statusDot.className = `status-dot ${data.status}`;
-                }
-                if (statusText) {
-                    statusText.textContent = data.status;
-                }
-            }
+            const el = document.getElementById(`member-${data.userId}`);
+            if (el) { el.querySelector('.status-dot').className = `status-dot ${data.status}`; el.querySelector('.member-status-text').textContent = data.status; }
         }
 
         async function selectChannel(channel) {
-            currentChannel = channel;
-            document.getElementById('current-channel-name').textContent = channel.name;
+            currentChannel = channel; document.getElementById('current-channel-name').textContent = channel.name;
             document.getElementById('msg-input').placeholder = `Mensagem #${channel.name}`;
-            
-            socket.emit('join_channel', channel.id);
-            
-            const messages = await api(`/api/channels/${channel.id}/messages`);
-            const container = document.getElementById('chat-messages');
-            container.innerHTML = '';
-            messages.forEach(appendMessage);
-            scrollToBottom();
+            socket.emit('join_channel', channel._id || channel.id);
+            const messages = await api(`/api/channels/${channel._id || channel.id}/messages`);
+            const container = document.getElementById('chat-messages'); container.innerHTML = '';
+            messages.forEach(appendMessage); scrollToBottom();
         }
 
-        function escapeHTML(str) {
-            return str.replace(/[&<>'"]/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag]));
-        }
-
+        function escapeHTML(str) { return (str||'').replace(/[&<>'"]/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag])); }
         function formatMessage(text) {
+            if(!text) return "";
             let safe = escapeHTML(text);
-            safe = safe.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            safe = safe.replace(/\*(.*?)\*/g, '<i>$1</i>');
-            safe = safe.replace(/`{3}([\s\S]*?)`{3}/g, '<pre style="background:var(--bg-dark);padding:8px;border-radius:4px;margin-top:4px;"><code>$1</code></pre>');
-            return safe;
+            safe = safe.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>');
+            return safe.replace(/`{3}([\s\S]*?)`{3}/g, '<pre style="background:var(--bg-dark);padding:8px;border-radius:4px;margin-top:4px;"><code>$1</code></pre>');
+        }
+
+        // LÓGICA DE UPLOAD
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !currentChannel) return;
+            const statusEl = document.getElementById('upload-status'); statusEl.style.display = 'block';
+
+            const formData = new FormData(); formData.append('file', file);
+            try {
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.url) {
+                    socket.emit('send_message', { channelId: currentChannel._id || currentChannel.id, content: '', fileUrl: data.url, fileType: data.type, fileName: data.name });
+                }
+            } catch (e) { alert('Erro ao fazer upload do arquivo.'); }
+            statusEl.style.display = 'none'; event.target.value = '';
+        }
+
+        function generateEmbed(url, type, name) {
+            if (!url) return '';
+            if (type.startsWith('image/')) return `<div class="msg-attachment"><img src="${escapeHTML(url)}" alt="imagem"></div>`;
+            if (type.startsWith('video/')) return `<div class="msg-attachment"><video src="${escapeHTML(url)}" controls></video></div>`;
+            return `<a href="${escapeHTML(url)}" download class="msg-attachment msg-attachment-file"><i class="ph-bold ph-file"></i> <div><b>${escapeHTML(name)}</b><br><small>Clique para baixar</small></div></a>`;
         }
 
         function appendMessage(msg) {
-            const isSelf = msg.user_id === currentUser.id;
-            const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const isSelf = (msg.user_id && (msg.user_id._id || msg.user_id) === currentUser._id);
+            const time = new Date(msg.createdAt || msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const container = document.getElementById('chat-messages');
             
-            const el = document.createElement('div');
-            el.className = `message ${isSelf ? 'self' : ''}`;
+            const avatarUrl = msg.user_id ? msg.user_id.avatar : msg.avatar;
+            const displayName = msg.user_id ? msg.user_id.display_name : msg.display_name;
+            const uId = msg.user_id ? (msg.user_id._id || msg.user_id) : msg.user_id;
             
-            const avatarContent = renderAvatarHTML(msg.avatar, msg.display_name);
+            const avatarHtml = avatarUrl ? `<img src="${escapeHTML(avatarUrl)}">` : escapeHTML(displayName.charAt(0));
             
+            const el = document.createElement('div'); el.className = `message ${isSelf ? 'self' : ''}`;
             el.innerHTML = `
-                <div class="msg-avatar" style="cursor:pointer;" onclick="openProfile('${msg.user_id}')" title="Ver Perfil">${avatarContent}</div>
+                <div class="msg-avatar" style="cursor:pointer;" onclick="openProfile('${uId}')">${avatarHtml}</div>
                 <div class="msg-content-wrapper">
-                    <div class="msg-header">
-                        <span class="msg-author" style="cursor:pointer;" onclick="openProfile('${msg.user_id}')">${escapeHTML(msg.display_name)}</span>
-                        <span class="msg-time">${time}</span>
-                    </div>
-                    <div class="msg-bubble">${formatMessage(msg.content)}</div>
-                </div>
-            `;
-            container.appendChild(el);
-            scrollToBottom();
+                    <div class="msg-header"><span class="msg-author" style="cursor:pointer;" onclick="openProfile('${uId}')">${escapeHTML(displayName)}</span><span class="msg-time">${time}</span></div>
+                    <div class="msg-bubble">${formatMessage(msg.content)} ${generateEmbed(msg.fileUrl, msg.fileType, msg.fileName)}</div>
+                </div>`;
+            container.appendChild(el); scrollToBottom();
         }
 
-        function scrollToBottom() {
-            const container = document.getElementById('chat-messages');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        }
-
+        function scrollToBottom() { const container = document.getElementById('chat-messages'); container.scrollTop = container.scrollHeight; }
+        function handleKeyPress(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
         function sendMessage() {
-            const input = document.getElementById('msg-input');
-            const content = input.value.trim();
+            const input = document.getElementById('msg-input'); const content = input.value.trim();
             if (!content || !currentChannel) return;
-            
-            socket.emit('send_message', {
-                channelId: currentChannel.id,
-                content: content
-            });
-            input.value = '';
-            input.focus();
+            socket.emit('send_message', { channelId: currentChannel._id || currentChannel.id, content: content });
+            input.value = ''; input.focus();
         }
 
-        // --- DEFINIÇÕES ---
-        function openSettings() {
-            document.getElementById('set-avatar').value = currentUser.avatar || '';
-            document.getElementById('set-display-name').value = currentUser.display_name;
-            document.getElementById('set-bio').value = currentUser.bio || '';
-            document.getElementById('set-status').value = currentUser.status || 'Online';
-            document.getElementById('settings-modal').classList.add('active');
-        }
-        
-        function closeSettings() {
-            document.getElementById('settings-modal').classList.remove('active');
-        }
-        
+        function openSettings() { document.getElementById('set-avatar').value = currentUser.avatar || ''; document.getElementById('set-display-name').value = currentUser.display_name; document.getElementById('set-bio').value = currentUser.bio || ''; document.getElementById('set-status').value = currentUser.status || 'Online'; document.getElementById('settings-modal').classList.add('active'); }
+        function closeSettings() { document.getElementById('settings-modal').classList.remove('active'); }
         async function saveSettings() {
-            const avatar = document.getElementById('set-avatar').value;
-            const dName = document.getElementById('set-display-name').value;
-            const bio = document.getElementById('set-bio').value;
-            const status = document.getElementById('set-status').value;
+            const avatar = document.getElementById('set-avatar').value, dName = document.getElementById('set-display-name').value, bio = document.getElementById('set-bio').value, status = document.getElementById('set-status').value;
             try {
                 await api('/api/profile', 'POST', { display_name: dName, bio, status, avatar });
-                currentUser.display_name = dName;
-                currentUser.bio = bio;
-                currentUser.status = status;
-                currentUser.avatar = avatar;
-                
-                document.getElementById('my-name').textContent = dName;
-                updateAvatarEl('my-avatar', avatar, dName);
-                document.getElementById('my-status').textContent = status;
-                closeSettings();
-
-                if (currentServer) loadMembers(currentServer.id);
+                currentUser.display_name = dName; currentUser.bio = bio; currentUser.status = status; currentUser.avatar = avatar;
+                document.getElementById('my-name').textContent = dName; updateAvatarEl('my-avatar', avatar, dName); document.getElementById('my-status').textContent = status; closeSettings();
+                if (currentServer) loadMembers(currentServer._id || currentServer.id);
             } catch(e) { alert('Falha ao guardar as definições'); }
         }
-
-        // --- VER PERFIL ---
         async function openProfile(userId) {
             try {
                 const user = await api(`/api/users/${userId}`);
-                document.getElementById('prof-name').textContent = user.display_name;
-                document.getElementById('prof-username').textContent = `@${user.username}`;
-                document.getElementById('prof-bio').textContent = user.bio || 'Nenhuma biografia definida.';
-                document.getElementById('prof-status').textContent = user.status || 'Offline';
-                
-                updateAvatarEl('prof-avatar', user.avatar, user.display_name);
-                
-                document.getElementById('profile-modal').classList.add('active');
-            } catch (e) {
-                console.error("Erro ao carregar perfil", e);
-            }
+                document.getElementById('prof-name').textContent = user.display_name; document.getElementById('prof-username').textContent = `@${user.username}`; document.getElementById('prof-bio').textContent = user.bio || 'Nenhuma biografia definida.'; document.getElementById('prof-status').textContent = user.status || 'Offline';
+                updateAvatarEl('prof-avatar', user.avatar, user.display_name); document.getElementById('profile-modal').classList.add('active');
+            } catch (e) { console.error(e); }
         }
-
-        function closeProfile() {
-            document.getElementById('profile-modal').classList.remove('active');
-        }
+        function closeProfile() { document.getElementById('profile-modal').classList.remove('active'); }
     </script>
 </body>
 </html>
