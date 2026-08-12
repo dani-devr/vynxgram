@@ -21,12 +21,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
 
-// Middlewares com limite aumentado para suportar requisições maiores
-app.use(express.json({ limit: '1024mb' }));
-app.use(express.urlencoded({ limit: '1024mb', extended: true }));
+// Middlewares com limite aumentado para suportar requisições maiores (3GB)
+app.use(express.json({ limit: '3072mb' }));
+app.use(express.urlencoded({ limit: '3072mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Configuração de Upload de Arquivos (1GB limite)
+// Configuração de Upload de Arquivos (3GB limite máximo para Vynx Plus)
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
     filename: (req, file, cb) => {
@@ -34,7 +34,7 @@ const storage = multer.diskStorage({
         cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
-const upload = multer({ storage: storage, limits: { fileSize: 1024 * 1024 * 1024 } }); // 1GB
+const upload = multer({ storage: storage, limits: { fileSize: 3 * 1024 * 1024 * 1024 } }); // 3GB
 
 // Sessão de Utilizador
 const sessionMiddleware = session({
