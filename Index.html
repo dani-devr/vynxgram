@@ -12,153 +12,224 @@
                 extend: {
                     colors: {
                         bgDark: '#1E1F22', bgMid: '#2B2D31', bgLight: '#313338', bgHover: '#3F4147',
-                        brand: '#5865F2', brandHover: '#4752C4', textMain: '#F2F3F5', textMuted: '#B5BAC1'
+                        brand: '#5865F2', brandHover: '#4752C4', success: '#23a559',
+                        textMain: '#F2F3F5', textMuted: '#B5BAC1', plusGrad1: '#ff73fa', plusGrad2: '#5865F2'
                     }
                 }
             }
         }
     </script>
     <style>
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
+        /* Scrollbar estilo Discord */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #2B2D31; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #1A1B1E; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #111214; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        body { font-family: 'gg sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .hide-scroll::-webkit-scrollbar { display: none; }
-        .msg-bubble { max-width: 85%; }
-        .attachment-img { max-width: 400px; max-height: 300px; border-radius: 8px; object-fit: cover; margin-top: 8px; }
+        
+        /* Estilos Vynx Plus */
+        .name-plus {
+            background: linear-gradient(90deg, #ff73fa, #5865F2, #ff73fa);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+            font-weight: 800;
+            font-family: 'Georgia', serif; /* Fonte customizada para o Plus */
+            letter-spacing: 0.5px;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+        
+        /* Animação Modal Plus */
+        .glow-border {
+            position: relative;
+        }
+        .glow-border::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #ff73fa, #5865F2, #ff73fa);
+            z-index: -1; border-radius: 14px; animation: shine 3s linear infinite; background-size: 200% auto;
+        }
+
+        /* Embeds Premium */
+        .attachment-img { max-width: 400px; max-height: 350px; border-radius: 8px; object-fit: contain; background: #1E1F22; }
     </style>
 </head>
 <body class="bg-bgDark text-textMain h-screen w-screen overflow-hidden flex antialiased">
 
     <!-- TELA DE AUTENTICAÇÃO -->
     <div id="auth-screen" class="absolute inset-0 z-50 bg-bgDark flex items-center justify-center">
-        <div class="bg-bgMid p-8 rounded-xl shadow-xl w-full max-w-sm border border-bgHover text-center">
+        <div class="bg-bgLight p-8 rounded-xl shadow-2xl w-full max-w-sm border border-bgHover text-center">
             <i class="ph-fill ph-planet text-brand text-5xl mb-2 inline-block"></i>
-            <h1 class="text-2xl font-bold mb-6">Vynxgram</h1>
+            <h1 class="text-2xl font-bold mb-6 text-white">Bem-vindo de volta!</h1>
             
-            <div id="auth-error" class="hidden bg-red-500/20 text-red-400 text-sm p-3 rounded mb-4"></div>
+            <div id="auth-error" class="hidden bg-red-500/20 text-red-400 text-sm p-3 rounded mb-4 font-medium"></div>
 
             <div id="login-form" class="space-y-4 text-left">
                 <div>
-                    <label class="block text-xs font-bold text-textMuted uppercase mb-1">Nome de Utilizador</label>
+                    <label class="block text-[11px] font-bold text-textMuted uppercase mb-2">Nome de Utilizador</label>
                     <input type="text" id="login-user" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none focus:ring-1 focus:ring-brand">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-textMuted uppercase mb-1">Palavra-Passe</label>
+                    <label class="block text-[11px] font-bold text-textMuted uppercase mb-2">Palavra-Passe</label>
                     <input type="password" id="login-pass" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none focus:ring-1 focus:ring-brand">
                 </div>
-                <button onclick="login()" class="w-full bg-brand hover:bg-brandHover text-white font-medium py-2.5 rounded transition">Entrar</button>
-                <p class="text-xs text-textMuted text-center cursor-pointer hover:text-brand" onclick="toggleAuth()">Ainda não tens conta? Registar</p>
+                <button onclick="login()" class="w-full bg-brand hover:bg-brandHover text-white font-medium py-2.5 rounded transition mt-2">Entrar</button>
+                <p class="text-sm text-textMuted text-left mt-2">Precisas de uma conta? <span class="text-brand cursor-pointer hover:underline" onclick="toggleAuth()">Registar</span></p>
             </div>
 
             <div id="register-form" class="space-y-4 text-left hidden">
                 <div>
-                    <label class="block text-xs font-bold text-textMuted uppercase mb-1">Nome de Utilizador</label>
+                    <label class="block text-[11px] font-bold text-textMuted uppercase mb-2">Nome de Utilizador</label>
                     <input type="text" id="reg-user" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none focus:ring-1 focus:ring-brand">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-textMuted uppercase mb-1">Palavra-Passe</label>
+                    <label class="block text-[11px] font-bold text-textMuted uppercase mb-2">Palavra-Passe</label>
                     <input type="password" id="reg-pass" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none focus:ring-1 focus:ring-brand">
                 </div>
-                <button onclick="register()" class="w-full bg-brand hover:bg-brandHover text-white font-medium py-2.5 rounded transition">Registar Conta</button>
-                <p class="text-xs text-textMuted text-center cursor-pointer hover:text-brand" onclick="toggleAuth()">Já tens conta? Entrar</p>
+                <button onclick="register()" class="w-full bg-brand hover:bg-brandHover text-white font-medium py-2.5 rounded transition mt-2">Registar Conta</button>
+                <p class="text-sm text-textMuted text-left mt-2"><span class="text-brand cursor-pointer hover:underline" onclick="toggleAuth()">Já tenho conta</span></p>
             </div>
         </div>
     </div>
 
     <!-- APLICAÇÃO -->
     <div id="app-layout" class="hidden flex w-full h-full">
+        
         <!-- Barra Esquerda (Servidores) -->
-        <div class="w-[72px] bg-bgDark flex flex-col items-center py-3 gap-2 shrink-0 border-r border-bgMid" id="servers-list"></div>
+        <div class="w-[72px] bg-bgDark flex flex-col items-center py-3 gap-2 shrink-0 border-r border-[#1e1f22]" id="servers-list"></div>
 
         <!-- Barra Central (Canais e Perfil) -->
-        <div class="w-60 bg-bgMid flex flex-col shrink-0 absolute md:relative z-40 h-full -translate-x-full md:translate-x-0 transition-transform duration-300" id="channels-sidebar">
-            <div class="h-12 shadow-sm flex items-center px-4 font-semibold text-[15px] border-b border-bgDark">
+        <div class="w-60 bg-bgMid flex flex-col shrink-0 absolute md:relative z-40 h-full -translate-x-full md:translate-x-0 transition-transform duration-300 rounded-tl-lg" id="channels-sidebar">
+            <div class="h-12 shadow-sm flex items-center px-4 font-bold text-[15px] border-b border-bgDark cursor-pointer hover:bg-bgHover transition-colors">
                 <span id="current-server-name" class="truncate">Servidor</span>
+                <i class="ph-bold ph-caret-down ml-auto"></i>
             </div>
-            <div class="flex-1 overflow-y-auto p-2 space-y-0.5" id="channels-list"></div>
             
-            <div class="h-[52px] bg-bgDark/40 flex items-center px-2 gap-2 shrink-0">
-                <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center font-bold text-white overflow-hidden cursor-pointer" onclick="openSettings()" id="my-avatar"></div>
-                <div class="flex-1 min-w-0 cursor-pointer" onclick="openSettings()">
-                    <div class="text-sm font-semibold truncate leading-tight" id="my-name">Usuário</div>
-                    <div class="text-[11px] text-textMuted truncate leading-tight" id="my-status">Online</div>
+            <div class="flex-1 overflow-y-auto p-2 space-y-[2px]" id="channels-list"></div>
+            
+            <div class="h-[52px] bg-[#232428] flex items-center px-2 gap-2 shrink-0">
+                <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center font-bold text-white overflow-hidden cursor-pointer relative group" onclick="openSettings()" id="my-avatar">
+                    <!-- Overlay escuro no hover para indicar clique -->
+                    <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center"><i class="ph-bold ph-gear text-white text-xs"></i></div>
                 </div>
-                <button class="w-8 h-8 rounded text-textMuted hover:bg-bgHover hover:text-white" onclick="openSettings()"><i class="ph-bold ph-gear"></i></button>
+                <div class="flex-1 min-w-0 cursor-pointer" onclick="openSettings()">
+                    <div class="text-[14px] font-bold truncate leading-tight" id="my-name">Usuário</div>
+                    <div class="text-[12px] text-textMuted truncate leading-tight" id="my-status">Online</div>
+                </div>
+                <!-- Botão Vynx Plus -->
+                <button class="w-8 h-8 rounded text-textMuted hover:bg-bgHover hover:text-[#ff73fa] flex items-center justify-center transition-colors" onclick="openPlusModal()" title="Adquirir Vynx Plus">
+                    <i class="ph-fill ph-sparkle text-lg"></i>
+                </button>
             </div>
         </div>
 
         <!-- Área de Chat -->
         <div class="flex-1 bg-bgLight flex flex-col min-w-0 relative">
-            <div class="h-12 flex items-center px-4 border-b border-bgDark/50 shadow-sm shrink-0 gap-3">
+            <div class="h-12 flex items-center px-4 border-b border-bgDark shadow-sm shrink-0 gap-3">
                 <button class="md:hidden text-textMuted hover:text-textMain" onclick="document.getElementById('channels-sidebar').classList.toggle('-translate-x-full')"><i class="ph-bold ph-list text-xl"></i></button>
                 <i class="ph-bold ph-hash text-textMuted text-xl"></i>
-                <span class="font-semibold" id="current-channel-name">geral</span>
+                <span class="font-bold text-[15px]" id="current-channel-name">geral</span>
                 <button class="ml-auto md:hidden text-textMuted hover:text-white" onclick="document.getElementById('members-sidebar').classList.toggle('hidden')"><i class="ph-bold ph-users text-xl"></i></button>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col" id="chat-messages"></div>
+            <!-- MENSAGENS -->
+            <div class="flex-1 overflow-y-auto py-4 flex flex-col" id="chat-messages">
+                <!-- Estilo Discord gerado pelo JS -->
+            </div>
 
-            <div class="p-4 shrink-0">
-                <div class="bg-bgHover rounded-lg flex items-center px-4 py-2.5 gap-3">
+            <!-- Input Box -->
+            <div class="px-4 pb-6 pt-2 shrink-0">
+                <div class="bg-[#383A40] rounded-lg flex items-center px-4 py-2 gap-3">
                     <input type="file" id="file-input" style="display: none;" onchange="handleFileUpload(event)">
-                    <button class="text-textMuted hover:text-textMain transition-colors relative" onclick="document.getElementById('file-input').click()">
-                        <i class="ph-bold ph-plus-circle text-xl"></i>
-                        <span id="upload-status" class="absolute -top-8 left-0 bg-brand text-white text-xs px-2 py-1 rounded hidden">A Enviar...</span>
+                    <button class="w-6 h-6 rounded-full bg-textMuted hover:bg-textMain text-[#383A40] flex items-center justify-center transition-colors relative" onclick="document.getElementById('file-input').click()" title="Enviar Ficheiro">
+                        <i class="ph-bold ph-plus text-sm"></i>
+                        <span id="upload-status" class="absolute -top-8 left-0 bg-brand text-white text-xs px-2 py-1 rounded hidden font-bold">A Enviar...</span>
                     </button>
-                    <input type="text" id="msg-input" class="flex-1 bg-transparent text-textMain focus:outline-none text-[15px]" placeholder="Enviar mensagem..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <input type="text" id="msg-input" class="flex-1 bg-transparent text-textMain focus:outline-none text-[15px] py-1" placeholder="Enviar mensagem em #geral" onkeypress="if(event.key==='Enter') sendMessage()">
                     <button class="text-textMuted hover:text-brand" onclick="sendMessage()"><i class="ph-bold ph-paper-plane-right text-xl"></i></button>
                 </div>
             </div>
         </div>
 
         <!-- Barra Direita (Membros) -->
-        <div class="w-60 bg-bgMid flex-col shrink-0 border-l border-bgDark hidden md:flex absolute md:relative right-0 h-full z-40" id="members-sidebar">
-            <div class="p-4 pt-6 text-xs font-semibold text-textMuted uppercase tracking-wider">Membros</div>
-            <div class="flex-1 overflow-y-auto p-2 space-y-1" id="members-list"></div>
+        <div class="w-60 bg-bgMid flex-col shrink-0 hidden md:flex absolute md:relative right-0 h-full z-40" id="members-sidebar">
+            <div class="p-4 pt-6 text-[12px] font-bold text-textMuted uppercase tracking-wider">Membros</div>
+            <div class="flex-1 overflow-y-auto p-2 space-y-[2px]" id="members-list"></div>
         </div>
     </div>
 
-    <!-- MODAL DE PERFIL/CONFIGURAÇÕES -->
+    <!-- MODAL VYNX PLUS -->
+    <div id="plus-modal" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center">
+        <div class="bg-bgLight w-full max-w-sm rounded-xl overflow-hidden shadow-2xl relative glow-border m-4">
+            <div class="p-6 text-center">
+                <i class="ph-fill ph-sparkle text-5xl text-transparent bg-clip-text bg-gradient-to-r from-plusGrad1 to-plusGrad2 mb-2 inline-block"></i>
+                <h2 class="text-2xl font-bold mb-1">Vynx <span class="text-transparent bg-clip-text bg-gradient-to-r from-plusGrad1 to-plusGrad2">Plus</span></h2>
+                <p class="text-sm text-textMuted mb-6">Desbloqueia o poder supremo do chat.</p>
+                
+                <div class="space-y-3 text-left bg-bgDark p-4 rounded-lg border border-bgHover mb-6">
+                    <div class="flex items-center gap-3">
+                        <i class="ph-fill ph-upload-simple text-brand text-lg"></i>
+                        <span class="text-sm font-medium">Uploads até <strong>3GB</strong> (vs 1GB)</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="ph-fill ph-text-aa text-[#ff73fa] text-lg"></i>
+                        <span class="text-sm font-medium">Nome com Fonte Especial Animada</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="ph-fill ph-seal-check text-yellow-500 text-lg"></i>
+                        <span class="text-sm font-medium">Insígnia de Vynx Plus Exclusiva</span>
+                    </div>
+                </div>
+
+                <button id="buy-plus-btn" class="w-full bg-brand hover:bg-brandHover text-white font-bold py-3 rounded-lg transition-colors flex justify-center items-center gap-2" onclick="buyVynxPlus()">
+                    Comprar por $9.99 <span class="text-xs font-normal opacity-80">(Cosmético)</span>
+                </button>
+                <button class="mt-4 text-sm text-textMuted hover:text-white transition-colors" onclick="closePlusModal()">Talvez mais tarde</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIGURAÇÕES -->
     <div id="settings-modal" class="fixed inset-0 bg-black/70 z-50 hidden items-center justify-center">
         <div class="bg-bgLight w-full max-w-md rounded-xl shadow-2xl flex flex-col overflow-hidden">
-            <div class="p-5 border-b border-bgDark flex justify-between items-center">
-                <h2 class="text-xl font-bold">Definições da Conta</h2>
+            <div class="p-5 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-white">A Minha Conta</h2>
                 <button class="text-textMuted hover:text-white" onclick="closeSettings()"><i class="ph-bold ph-x text-xl"></i></button>
             </div>
-            <div class="p-5 space-y-4">
-                <div><label class="block text-xs font-bold text-textMuted uppercase mb-1">Nome de Exibição</label><input type="text" id="set-display-name" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none focus:ring-1 focus:ring-brand"></div>
-                <div><label class="block text-xs font-bold text-textMuted uppercase mb-1">URL do Avatar</label><input type="text" id="set-avatar" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none focus:ring-1 focus:ring-brand"></div>
-                <div><label class="block text-xs font-bold text-textMuted uppercase mb-1">Biografia</label><input type="text" id="set-bio" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none focus:ring-1 focus:ring-brand"></div>
-                <div><label class="block text-xs font-bold text-textMuted uppercase mb-1">Estado</label>
+            <div class="px-5 pb-5 space-y-4">
+                <div><label class="block text-xs font-bold text-textMuted uppercase mb-2">Nome de Exibição</label><input type="text" id="set-display-name" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none"></div>
+                <div><label class="block text-xs font-bold text-textMuted uppercase mb-2">URL do Avatar</label><input type="text" id="set-avatar" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none"></div>
+                <div><label class="block text-xs font-bold text-textMuted uppercase mb-2">Biografia</label><input type="text" id="set-bio" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none"></div>
+                <div><label class="block text-xs font-bold text-textMuted uppercase mb-2">Estado</label>
                     <select id="set-status" class="w-full bg-bgDark text-textMain p-2.5 rounded focus:outline-none">
                         <option value="Online">Online</option><option value="Ausente">Ausente</option><option value="Não Incomodar">Não Incomodar</option>
                     </select>
                 </div>
             </div>
-            <div class="p-5 bg-bgMid flex justify-between">
+            <div class="p-5 bg-bgMid flex justify-between rounded-b-xl border-t border-bgDark">
                 <button class="text-red-400 hover:underline text-sm font-medium" onclick="logout()">Sair</button>
-                <div class="flex gap-3"><button class="bg-brand hover:bg-brandHover text-white px-4 py-2 rounded text-sm transition" onclick="saveSettings()">Guardar Alterações</button></div>
+                <div class="flex gap-3"><button class="bg-brand hover:bg-brandHover text-white px-4 py-2 rounded text-sm font-medium transition" onclick="saveSettings()">Guardar Alterações</button></div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO DE PERFIL DE OUTRO USUÁRIO -->
+    <!-- MODAL DE PERFIL USUÁRIO -->
     <div id="profile-modal" class="fixed inset-0 bg-black/70 z-50 hidden items-center justify-center">
-        <div class="bg-bgLight w-full max-w-sm rounded-xl overflow-hidden shadow-2xl relative">
-            <button class="absolute top-2 right-2 text-white z-10 p-1 bg-black/40 rounded-full hover:bg-red-500" onclick="document.getElementById('profile-modal').classList.replace('flex', 'hidden')"><i class="ph-bold ph-x text-lg"></i></button>
-            <div class="h-24 bg-brand"></div>
-            <div class="px-5 pb-5 relative">
-                <div class="w-20 h-20 rounded-full border-4 border-bgLight bg-bgDark flex items-center justify-center text-3xl font-bold absolute -top-10 overflow-hidden" id="view-avatar">U</div>
-                <div class="mt-12">
-                    <h3 class="text-xl font-bold" id="view-name">Nome</h3>
-                    <p class="text-sm text-textMuted mb-4">@<span id="view-user"></span></p>
-                    <div class="bg-bgDark p-3 rounded text-sm mb-3">
-                        <p class="text-xs font-bold text-textMuted uppercase mb-1">Sobre Mim</p>
-                        <p id="view-bio">Sem biografia.</p>
-                    </div>
+        <div class="bg-bgDark w-full max-w-[340px] rounded-lg overflow-hidden shadow-2xl relative border border-bgMid">
+            <div class="h-[120px] bg-brand relative" id="view-banner"></div>
+            <div class="px-4 pb-4 relative bg-bgDark">
+                <div class="w-24 h-24 rounded-full border-[6px] border-bgDark bg-bgLight flex items-center justify-center text-4xl font-bold absolute -top-12 overflow-hidden" id="view-avatar">U</div>
+                
+                <div class="mt-14 bg-[#111214] rounded-lg p-3 border border-bgMid">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-1" id="view-name">Nome</h3>
+                    <p class="text-sm text-textMuted font-medium mb-3" id="view-user">@username</p>
+                    <div class="w-full h-[1px] bg-bgMid mb-3"></div>
+                    <h4 class="text-xs font-bold text-textMuted uppercase mb-1">Sobre Mim</h4>
+                    <p class="text-sm text-textMain whitespace-pre-wrap" id="view-bio">Sem biografia.</p>
                 </div>
             </div>
         </div>
@@ -177,6 +248,11 @@
             if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || 'Erro');
             return res.json();
         }
+
+        // LÓGICA VYNX PLUS
+        const PLUS_BADGE = '✦'; 
+        function isPlus(name) { return name && name.includes(PLUS_BADGE); }
+        function cleanName(name) { return name ? name.replace(PLUS_BADGE, '').trim() : 'Desconhecido'; }
 
         async function checkAuth() {
             try { const data = await api('/api/me'); if (data.user) { currentUser = data.user; showApp(); initApp(); } } 
@@ -206,8 +282,17 @@
         }
 
         function updateUI(name, avatar, status) {
-            document.getElementById('my-name').textContent = name; document.getElementById('my-status').textContent = status;
-            document.getElementById('my-avatar').innerHTML = avatar ? `<img src="${escapeHTML(avatar)}" class="w-full h-full object-cover">` : name.charAt(0).toUpperCase();
+            const displayName = cleanName(name);
+            const plus = isPlus(name);
+            
+            document.getElementById('my-name').innerHTML = plus 
+                ? `<span class="name-plus">${escapeHTML(displayName)}</span>` 
+                : escapeHTML(displayName);
+                
+            document.getElementById('my-status').textContent = status;
+            document.getElementById('my-avatar').innerHTML = avatar 
+                ? `<img src="${escapeHTML(avatar)}" class="w-full h-full object-cover">` 
+                : displayName.charAt(0).toUpperCase();
         }
 
         async function initApp() {
@@ -229,9 +314,9 @@
             const channels = await api(`/api/servers/${server.id}/channels`);
             const list = document.getElementById('channels-list'); list.innerHTML = '';
             channels.forEach((c, index) => {
-                const el = document.createElement('div'); el.className = 'flex items-center px-2 py-1.5 rounded cursor-pointer text-textMuted hover:bg-bgHover hover:text-textMain ch-btn';
-                el.innerHTML = `<i class="ph-bold ph-hash mr-2"></i> <span class="truncate">${c.name}</span>`;
-                el.onclick = () => { document.querySelectorAll('.ch-btn').forEach(btn => btn.classList.remove('bg-bgHover', 'text-textMain')); el.classList.add('bg-bgHover', 'text-textMain'); selectChannel(c); };
+                const el = document.createElement('div'); el.className = 'flex items-center px-2 py-1.5 rounded cursor-pointer text-textMuted hover:bg-bgHover hover:text-textMain font-medium ch-btn';
+                el.innerHTML = `<i class="ph-bold ph-hash mr-2 text-xl opacity-70"></i> <span class="truncate">${c.name}</span>`;
+                el.onclick = () => { document.querySelectorAll('.ch-btn').forEach(btn => btn.classList.remove('bg-[#3F4147]', 'text-textMain')); el.classList.add('bg-[#3F4147]', 'text-textMain'); selectChannel(c); };
                 list.appendChild(el); if(index === 0) el.click();
             });
             loadMembers(server.id);
@@ -242,23 +327,37 @@
             const list = document.getElementById('members-list'); list.innerHTML = '';
             members.forEach(m => {
                 const color = m.status === 'Online' ? 'bg-green-500' : (m.status === 'Ausente' ? 'bg-yellow-500' : 'bg-gray-500');
-                const avatar = m.avatar ? `<img src="${escapeHTML(m.avatar)}" class="w-full h-full object-cover">` : m.display_name.charAt(0).toUpperCase();
-                list.innerHTML += `<div class="flex items-center gap-3 p-2 rounded hover:bg-bgHover cursor-pointer" onclick="viewProfile('${m.id}')"><div class="relative w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white shrink-0 font-bold overflow-visible"><div class="w-full h-full rounded-full overflow-hidden">${avatar}</div><div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 ${color} rounded-full border-2 border-bgMid"></div></div><div class="flex-1 min-w-0"><div class="text-[15px] font-medium truncate">${escapeHTML(m.display_name)}</div><div class="text-[11px] text-textMuted truncate">${m.status}</div></div></div>`;
+                const displayName = cleanName(m.display_name);
+                const plus = isPlus(m.display_name);
+                const avatar = m.avatar ? `<img src="${escapeHTML(m.avatar)}" class="w-full h-full object-cover">` : displayName.charAt(0).toUpperCase();
+                
+                const nameHtml = plus ? `<span class="name-plus text-[15px] truncate">${escapeHTML(displayName)}</span>` : `<span class="text-[15px] truncate">${escapeHTML(displayName)}</span>`;
+                
+                list.innerHTML += `<div class="flex items-center gap-3 p-2 rounded hover:bg-bgHover cursor-pointer opacity-90 hover:opacity-100" onclick="viewProfile('${m.id}')"><div class="relative w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white shrink-0 font-bold overflow-visible"><div class="w-full h-full rounded-full overflow-hidden">${avatar}</div><div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 ${color} rounded-full border-4 border-bgMid"></div></div><div class="flex-1 min-w-0 flex flex-col justify-center leading-tight">${nameHtml}</div></div>`;
             });
         }
 
         async function selectChannel(channel) {
             currentChannel = channel; document.getElementById('current-channel-name').textContent = channel.name;
+            document.getElementById('msg-input').placeholder = `Enviar mensagem em #${channel.name}`;
             socket.emit('join_channel', channel.id);
             const messages = await api(`/api/channels/${channel.id}/messages`);
             const container = document.getElementById('chat-messages'); container.innerHTML = '';
             messages.forEach(appendMessage); scrollToBottom();
         }
 
-        // LÓGICA DE UPLOAD
+        // LÓGICA DE UPLOAD VYNX PLUS (3GB vs 1GB)
         async function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file || !currentChannel) return;
+            
+            // Verificação Vynx Plus de Limite
+            const maxLimit = isPlus(currentUser.display_name) ? 3 * 1024 * 1024 * 1024 : 1024 * 1024 * 1024;
+            if (file.size > maxLimit) {
+                alert(`Ficheiro muito grande! O teu limite é de ${isPlus(currentUser.display_name) ? '3GB (Vynx Plus)' : '1GB'}.`);
+                return;
+            }
+
             const statusEl = document.getElementById('upload-status'); statusEl.style.display = 'block';
 
             const formData = new FormData(); formData.append('file', file);
@@ -271,28 +370,53 @@
         }
 
         function escapeHTML(str) { return (str||'').replace(/[&<>'"]/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag])); }
-        function buildEmbed(url, type, name) {
-            if (!url) return '';
-            if (type.startsWith('image/')) return `<img src="${escapeHTML(url)}" class="attachment-img" alt="imagem">`;
-            if (type.startsWith('video/')) return `<video src="${escapeHTML(url)}" class="attachment-img" controls></video>`;
-            return `<a href="${escapeHTML(url)}" download class="flex items-center gap-2 p-3 bg-bgDark rounded mt-2 hover:bg-bgHover text-brand w-fit border border-bgHover"><i class="ph-bold ph-file text-2xl"></i> <span class="text-textMain">${escapeHTML(name)}</span></a>`;
+        function formatMessage(text) {
+            if(!text) return "";
+            let safe = escapeHTML(text);
+            safe = safe.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>');
+            return safe.replace(/`{3}([\s\S]*?)`{3}/g, '<pre class="bg-bgDark p-2 rounded border border-[#1e1f22] mt-1 font-mono text-sm"><code>$1</code></pre>');
         }
 
+        // EMBEDS ESTILO DISCORD
+        function buildEmbed(url, type, name) {
+            if (!url) return '';
+            if (type.startsWith('image/')) return `<div class="mt-2 rounded-lg overflow-hidden inline-block"><img src="${escapeHTML(url)}" class="attachment-img" alt="imagem"></div>`;
+            if (type.startsWith('video/')) return `<div class="mt-2 rounded-lg overflow-hidden inline-block bg-bgDark border border-bgMid p-1"><video src="${escapeHTML(url)}" class="max-w-[400px] max-h-[300px] rounded" controls></video></div>`;
+            return `<a href="${escapeHTML(url)}" download class="flex items-center gap-3 p-3 bg-bgDark rounded-lg mt-2 hover:bg-bgHover w-fit border border-bgMid transition-colors"><div class="w-10 h-10 rounded bg-bgMid flex items-center justify-center text-brand"><i class="ph-bold ph-file text-2xl"></i></div> <div class="flex flex-col"><span class="text-textMain font-bold text-sm">${escapeHTML(name)}</span><span class="text-[11px] text-textMuted font-medium">Clique para baixar</span></div></a>`;
+        }
+
+        // MENSAGEM ESTILO DISCORD
         function appendMessage(msg) {
-            const isSelf = msg.user_id === currentUser.id;
             const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const container = document.getElementById('chat-messages');
-            const avatarHtml = msg.avatar ? `<img src="${escapeHTML(msg.avatar)}" class="w-full h-full object-cover">` : escapeHTML(msg.display_name.charAt(0));
             
-            const contentHtml = msg.content ? `<div class="break-words text-[15px] leading-snug">${escapeHTML(msg.content)}</div>` : '';
+            const cleanNameStr = cleanName(msg.display_name);
+            const plus = isPlus(msg.display_name);
+            const avatarHtml = msg.avatar ? `<img src="${escapeHTML(msg.avatar)}" class="w-full h-full object-cover">` : escapeHTML(cleanNameStr.charAt(0));
+            
+            const contentHtml = msg.content ? `<div class="text-[15px] leading-[1.375rem] text-textMain mt-[2px]">${formatMessage(msg.content)}</div>` : '';
             const embedHtml = buildEmbed(msg.file_url, msg.file_type, msg.file_name);
 
-            let html = '';
-            if (isSelf) {
-                html = `<div class="flex gap-3 justify-end group"><div class="msg-bubble bg-brand text-white px-3.5 py-2 rounded-2xl rounded-tr-sm shadow-sm">${contentHtml}${embedHtml}<div class="text-[10px] text-white/70 text-right mt-1">${time}</div></div></div>`;
-            } else {
-                html = `<div class="flex gap-3 group"><div class="w-10 h-10 rounded-full bg-bgHover flex items-center justify-center font-bold text-white shrink-0 overflow-hidden cursor-pointer mt-0.5" onclick="viewProfile('${msg.user_id}')">${avatarHtml}</div><div class="flex flex-col items-start msg-bubble"><div class="flex items-baseline gap-2 ml-1 mb-0.5"><span class="font-medium text-[15px] cursor-pointer hover:underline text-white" onclick="viewProfile('${msg.user_id}')">${escapeHTML(msg.display_name)}</span><span class="text-[11px] text-textMuted">${time}</span></div><div class="bg-bgMid text-textMain px-3.5 py-2 rounded-2xl rounded-tl-sm shadow-sm">${contentHtml}${embedHtml}</div></div></div>`;
-            }
+            // Título Vynx Plus
+            const titleHtml = plus 
+                ? `<span class="name-plus cursor-pointer hover:underline text-[15px]" onclick="viewProfile('${msg.user_id}')">${escapeHTML(cleanNameStr)}</span> <i class="ph-fill ph-sparkle text-plusGrad1 text-sm ml-1" title="Vynx Plus"></i>`
+                : `<span class="font-bold text-[15px] cursor-pointer hover:underline text-white" onclick="viewProfile('${msg.user_id}')">${escapeHTML(cleanNameStr)}</span>`;
+
+            const html = `
+                <div class="flex gap-4 hover:bg-bgDark/40 py-0.5 px-4 w-full mt-[17px] group transition-colors">
+                    <div class="w-10 h-10 rounded-full bg-brand flex items-center justify-center font-bold text-white shrink-0 overflow-hidden cursor-pointer mt-0.5" onclick="viewProfile('${msg.user_id}')">
+                        ${avatarHtml}
+                    </div>
+                    <div class="flex flex-col flex-1 min-w-0">
+                        <div class="flex items-baseline gap-2 leading-tight">
+                            ${titleHtml}
+                            <span class="text-xs text-textMuted font-medium ml-1">${time}</span>
+                        </div>
+                        ${contentHtml}
+                        ${embedHtml}
+                    </div>
+                </div>
+            `;
             container.innerHTML += html; scrollToBottom();
         }
 
@@ -303,21 +427,76 @@
             socket.emit('send_message', { channelId: currentChannel.id, content: c }); i.value = ''; i.focus();
         }
 
-        function openSettings() { document.getElementById('set-display-name').value = currentUser.display_name; document.getElementById('set-avatar').value = currentUser.avatar || ''; document.getElementById('set-bio').value = currentUser.bio || ''; document.getElementById('set-status').value = currentUser.status || 'Online'; document.getElementById('settings-modal').classList.replace('hidden', 'flex'); }
+        // VYNX PLUS MODAL LOGIC
+        function openPlusModal() { document.getElementById('plus-modal').classList.replace('hidden', 'flex'); }
+        function closePlusModal() { 
+            document.getElementById('plus-modal').classList.replace('flex', 'hidden'); 
+            const btn = document.getElementById('buy-plus-btn');
+            btn.innerHTML = `Comprar por $9.99 <span class="text-xs font-normal opacity-80">(Cosmético)</span>`;
+            btn.classList.remove('bg-success'); btn.classList.add('bg-brand');
+        }
+
+        async function buyVynxPlus() {
+            const btn = document.getElementById('buy-plus-btn');
+            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Processando...';
+            
+            setTimeout(async () => {
+                if (!isPlus(currentUser.display_name)) {
+                    // Adiciona a badge ao final do nome e guarda no servidor real via API!
+                    const newName = cleanName(currentUser.display_name) + ' ' + PLUS_BADGE;
+                    try {
+                        await api('/api/profile', 'POST', { 
+                            display_name: newName, avatar: currentUser.avatar, 
+                            bio: currentUser.bio, status: currentUser.status 
+                        });
+                        currentUser.display_name = newName;
+                        updateUI(newName, currentUser.avatar, currentUser.status);
+                        if (currentServer) loadMembers(currentServer.id);
+                    } catch(e) { console.error("Falha ao salvar Vynx Plus."); }
+                }
+                btn.innerHTML = '<i class="ph-bold ph-check-circle text-xl"></i> Vynx Plus Ativado!';
+                btn.classList.replace('bg-brand', 'bg-success');
+                setTimeout(closePlusModal, 2000);
+            }, 1500);
+        }
+
+        // MODAIS NORMAIS
+        function openSettings() { 
+            document.getElementById('set-display-name').value = cleanName(currentUser.display_name); 
+            document.getElementById('set-avatar').value = currentUser.avatar || ''; 
+            document.getElementById('set-bio').value = currentUser.bio || ''; 
+            document.getElementById('set-status').value = currentUser.status || 'Online'; 
+            document.getElementById('settings-modal').classList.replace('hidden', 'flex'); 
+        }
         function closeSettings() { document.getElementById('settings-modal').classList.replace('flex', 'hidden'); }
         async function saveSettings() {
             try {
-                const b = { display_name: document.getElementById('set-display-name').value, avatar: document.getElementById('set-avatar').value, bio: document.getElementById('set-bio').value, status: document.getElementById('set-status').value };
+                // Preserva o badge se existir
+                const newName = document.getElementById('set-display-name').value + (isPlus(currentUser.display_name) ? ' ' + PLUS_BADGE : '');
+                const b = { display_name: newName, avatar: document.getElementById('set-avatar').value, bio: document.getElementById('set-bio').value, status: document.getElementById('set-status').value };
                 await api('/api/profile', 'POST', b);
                 currentUser = { ...currentUser, ...b }; updateUI(b.display_name, b.avatar, b.status); closeSettings(); if (currentServer) loadMembers(currentServer.id);
             } catch(e) { alert('Erro ao guardar'); }
         }
         
+        // MODAL DE PERFIL DE OUTROS
+        window.addEventListener('click', (e) => {
+            if(e.target.id === 'profile-modal') document.getElementById('profile-modal').classList.replace('flex', 'hidden');
+        });
         async function viewProfile(id) {
             try {
                 const u = await api(`/api/users/${id}`);
-                document.getElementById('view-name').textContent = u.display_name; document.getElementById('view-user').textContent = u.username; document.getElementById('view-bio').textContent = u.bio || 'Sem biografia.';
-                document.getElementById('view-avatar').innerHTML = u.avatar ? `<img src="${escapeHTML(u.avatar)}" class="w-full h-full object-cover">` : u.display_name.charAt(0).toUpperCase();
+                const displayName = cleanName(u.display_name);
+                const plus = isPlus(u.display_name);
+                
+                document.getElementById('view-name').innerHTML = plus ? `<span class="name-plus text-2xl">${escapeHTML(displayName)}</span> <i class="ph-fill ph-sparkle text-plusGrad1"></i>` : escapeHTML(displayName);
+                document.getElementById('view-user').textContent = `@${u.username}`; 
+                document.getElementById('view-bio').textContent = u.bio || 'Sem biografia.';
+                
+                // Muda a cor do banner se tiver Vynx Plus
+                document.getElementById('view-banner').className = plus ? 'h-[120px] bg-gradient-to-r from-plusGrad1 to-plusGrad2 relative' : 'h-[120px] bg-brand relative';
+                
+                document.getElementById('view-avatar').innerHTML = u.avatar ? `<img src="${escapeHTML(u.avatar)}" class="w-full h-full object-cover">` : displayName.charAt(0).toUpperCase();
                 document.getElementById('profile-modal').classList.replace('hidden', 'flex');
             } catch(e) {}
         }
