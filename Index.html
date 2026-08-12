@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vynxgram</title>
-    <!-- Phosphor Icons for a clean, modern Telegram-like aesthetic -->
+    <!-- Phosphor Icons para estética moderna -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            /* Vynxgram Branding Palette */
+            /* Cores Vynxgram */
             --primary: #BFA7FF;
             --primary-hover: #9878E8;
             --primary-active: #6545A8;
@@ -22,7 +22,7 @@
             --success: #51CF66;
             --border: rgba(255, 255, 255, 0.08);
             
-            /* Sizing */
+            /* Tamanhos */
             --sidebar-left-width: 260px;
             --sidebar-right-width: 240px;
             --radius-md: 12px;
@@ -44,7 +44,7 @@
             display: flex;
         }
 
-        /* --- UTILS --- */
+        /* --- UTILITÁRIOS --- */
         .hidden { display: none !important; }
         .flex { display: flex; }
         .flex-col { display: flex; flex-direction: column; }
@@ -56,9 +56,9 @@
         .scrollable::-webkit-scrollbar-thumb { background: var(--bg-surface-hover); border-radius: 4px; }
 
         button { cursor: pointer; border: none; outline: none; background: transparent; color: inherit; font-family: inherit; }
-        input { font-family: inherit; outline: none; }
+        input, select { font-family: inherit; outline: none; }
 
-        /* --- AUTH SCREEN --- */
+        /* --- ECRÃ DE AUTENTICAÇÃO --- */
         #auth-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-surface));
@@ -89,10 +89,10 @@
         .auth-toggle:hover { color: var(--primary); }
         #auth-error { color: var(--danger); margin-bottom: 10px; font-size: 14px; display: none; }
 
-        /* --- MAIN APP LAYOUT --- */
+        /* --- LAYOUT DA APLICAÇÃO --- */
         #app-layout { width: 100vw; height: 100vh; }
 
-        /* Left Sidebar (Servers & DM) */
+        /* Barra Esquerda (Servidores) */
         .sidebar {
             width: 72px; background: var(--bg-dark);
             border-right: 1px solid var(--border);
@@ -101,10 +101,10 @@
         }
         .server-icon {
             width: 48px; height: 48px; border-radius: 24px;
-            background: var(--bg-surface); display: flex; justify-content: center; items-center;
+            background: var(--bg-surface); display: flex; justify-content: center; align-items: center;
             font-size: 20px; font-weight: bold; color: var(--primary);
             transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
+            position: relative; cursor: pointer;
         }
         .server-icon:hover, .server-icon.active {
             border-radius: 16px; background: var(--primary); color: var(--bg-dark);
@@ -113,7 +113,7 @@
         .server-icon.brand:hover { border-radius: 24px; background: transparent; transform: scale(1.1); }
         .separator { width: 32px; height: 2px; background: var(--border); border-radius: 2px; }
 
-        /* Middle Sidebar (Channels) */
+        /* Barra do Meio (Canais) */
         .channels-sidebar {
             width: 240px; background: var(--bg-surface);
             border-right: 1px solid var(--border);
@@ -132,19 +132,20 @@
         .channel-item:hover { background: var(--bg-surface-hover); color: var(--text-main); }
         .channel-item.active { background: var(--bg-surface-hover); color: var(--primary); font-weight: 500; }
         
-        /* User Profile Area (Bottom Middle Sidebar) */
+        /* Controlos de Utilizador (Baixo) */
         .user-controls {
             padding: 12px 16px; background: var(--bg-dark);
             border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px;
         }
-        .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--bg-dark); font-weight: bold;}
+        .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--bg-dark); font-weight: bold; overflow: hidden;}
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .user-info { flex: 1; overflow: hidden; }
         .user-name { font-size: 14px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
         .user-status { font-size: 12px; color: var(--text-muted); }
         .settings-btn { color: var(--text-muted); padding: 6px; border-radius: 6px; }
         .settings-btn:hover { background: var(--bg-surface-hover); color: var(--text-main); }
 
-        /* Main Chat Area */
+        /* Área de Chat */
         .chat-area { flex: 1; background: var(--bg-chat); position: relative; }
         .chat-header {
             height: 60px; padding: 0 20px; border-bottom: 1px solid var(--border);
@@ -154,10 +155,11 @@
         .chat-title { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; }
         .chat-messages { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth;}
         
-        /* Telegram Style Messages */
+        /* Mensagens */
         .message { display: flex; gap: 12px; max-width: 85%; }
         .message.self { align-self: flex-end; flex-direction: row-reverse; }
-        .msg-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-surface-hover); display: flex; justify-content: center; align-items: center; color: var(--text-muted); flex-shrink:0;}
+        .msg-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-surface-hover); display: flex; justify-content: center; align-items: center; color: var(--text-muted); flex-shrink:0; overflow: hidden;}
+        .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .msg-content-wrapper { display: flex; flex-direction: column; gap: 4px; }
         .message.self .msg-content-wrapper { align-items: flex-end; }
         .msg-header { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
@@ -171,7 +173,7 @@
         }
         .message.self .msg-bubble { background: var(--primary-active); border-radius: 16px 16px 4px 16px; }
 
-        /* Input Area */
+        /* Área de Input */
         .chat-input-wrapper { padding: 0 20px 24px 20px; background: transparent; }
         .chat-input-box {
             background: var(--bg-surface); border-radius: var(--radius-lg);
@@ -186,6 +188,41 @@
         .action-btn { color: var(--text-muted); font-size: 22px; transition: 0.2s; }
         .action-btn:hover { color: var(--primary); transform: scale(1.1); }
         
+        /* Barra Direita (Membros) */
+        .members-sidebar {
+            width: var(--sidebar-right-width); background: var(--bg-surface);
+            border-left: 1px solid var(--border);
+            display: flex; flex-direction: column;
+        }
+        .members-header {
+            height: 60px; padding: 0 16px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; font-weight: 600; font-size: 15px;
+        }
+        .member-list { padding: 12px 8px; flex: 1; }
+        .member-item {
+            padding: 8px 12px; border-radius: 6px; margin-bottom: 4px;
+            display: flex; align-items: center; gap: 10px; cursor: pointer; transition: 0.1s;
+        }
+        .member-item:hover { background: var(--bg-surface-hover); }
+        .member-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: var(--bg-dark); font-weight: bold; overflow: hidden; flex-shrink: 0; }
+        .member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .member-info { display: flex; flex-direction: column; overflow: hidden; flex: 1; }
+        .member-name { font-size: 14px; font-weight: 500; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+        .member-status-text { font-size: 11px; color: var(--text-muted); white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--success); margin-left: auto; border: 2px solid var(--bg-surface); flex-shrink: 0; }
+        .status-dot.Offline { background: var(--text-muted); }
+        .status-dot.Idle { background: #FAB005; }
+        .status-dot.Do\ Not\ Disturb { background: var(--danger); }
+
+        /* Janela Modal de Perfil */
+        .profile-banner { height: 100px; background: var(--primary); border-radius: 8px 8px 0 0; margin: -24px -24px 0 -24px; position: relative;}
+        .profile-modal-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--bg-dark); border: 4px solid var(--bg-surface); position: absolute; bottom: -40px; left: 24px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--primary); overflow: hidden;}
+        .profile-modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-details { margin-top: 50px; }
+        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .profile-username { color: var(--text-muted); margin-bottom: 16px; font-size: 14px; }
+        .profile-bio-box { background: var(--bg-dark); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+
         /* Modal Base */
         .modal-overlay {
             position: fixed; top:0; left:0; width: 100vw; height: 100vh;
@@ -196,73 +233,74 @@
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-content {
             background: var(--bg-surface); width: 100%; max-width: 450px;
-            border-radius: var(--radius-lg); padding: 24px; transform: translateY(20px); transition: 0.2s;
+            border-radius: var(--radius-lg); padding: 24px; transform: translateY(20px); transition: 0.2s; position: relative;
         }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
         .modal-header h2 { font-size: 20px; }
-        .modal-close { font-size: 24px; color: var(--text-muted); }
+        .modal-close { font-size: 24px; color: var(--text-muted); background: transparent; border: none; cursor: pointer;}
         .modal-close:hover { color: var(--danger); }
         .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
         .form-group label { font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;}
-        .form-input { padding: 12px; border-radius: 8px; background: var(--bg-dark); border: 1px solid var(--border); color: white; }
+        .form-input { padding: 12px; border-radius: 8px; background: var(--bg-dark); border: 1px solid var(--border); color: white; width: 100%; box-sizing: border-box;}
         
-        /* Responsive */
+        /* Responsivo */
         @media (max-width: 768px) {
             .channels-sidebar { position: fixed; left: 72px; height: 100vh; transform: translateX(-100%); transition: 0.3s; z-index: 5; }
             .channels-sidebar.open { transform: translateX(0); box-shadow: 10px 0 20px rgba(0,0,0,0.5);}
-            .chat-title i { display: block; margin-right: 12px; cursor: pointer; } /* Menu icon */
+            .chat-title i { display: block; margin-right: 12px; cursor: pointer; }
+            .hidden-mobile { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- AUTHENTICATION SCREEN -->
+    <!-- ECRÃ DE AUTENTICAÇÃO -->
     <div id="auth-screen" class="flex justify-center items-center">
         <div class="auth-card">
             <h1>Vynxgram</h1>
             <div id="auth-error"></div>
             
             <div id="login-form" class="auth-form">
-                <input type="text" id="login-user" class="auth-input" placeholder="Username" autocomplete="off">
-                <input type="password" id="login-pass" class="auth-input" placeholder="Password">
-                <button class="btn-primary" onclick="login()">Login</button>
-                <div class="auth-toggle" onclick="toggleAuth('register')">Need an account? Register</div>
+                <input type="text" id="login-user" class="auth-input" placeholder="Nome de utilizador" autocomplete="off">
+                <input type="password" id="login-pass" class="auth-input" placeholder="Palavra-passe">
+                <button class="btn-primary" onclick="login()">Entrar</button>
+                <div class="auth-toggle" onclick="toggleAuth('register')">Ainda não tens conta? Regista-te</div>
             </div>
 
             <div id="register-form" class="auth-form hidden">
-                <input type="text" id="reg-user" class="auth-input" placeholder="Username (Unique)" autocomplete="off">
-                <input type="password" id="reg-pass" class="auth-input" placeholder="Password">
-                <button class="btn-primary" onclick="register()">Create Account</button>
-                <div class="auth-toggle" onclick="toggleAuth('login')">Already have an account? Login</div>
+                <input type="text" id="reg-user" class="auth-input" placeholder="Nome de utilizador (Único)" autocomplete="off">
+                <input type="password" id="reg-pass" class="auth-input" placeholder="Palavra-passe">
+                <button class="btn-primary" onclick="register()">Criar Conta</button>
+                <div class="auth-toggle" onclick="toggleAuth('login')">Já tens conta? Entrar</div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APPLICATION -->
+    <!-- APLICAÇÃO PRINCIPAL -->
     <div id="app-layout" class="flex hidden">
         
-        <!-- Left Sidebar (Servers) -->
+        <!-- Barra Esquerda (Servidores) -->
         <div class="sidebar flex-col scrollable" id="servers-list">
             <div class="server-icon brand" title="Vynxgram Home">
                 <i class="ph-fill ph-planet"></i>
             </div>
             <div class="separator"></div>
-            <!-- Dynamic servers injected here -->
+            <!-- Servidores Injetados Aqui -->
         </div>
 
-        <!-- Middle Sidebar (Channels) -->
+        <!-- Barra Central (Canais) -->
         <div class="channels-sidebar flex-col" id="channels-sidebar">
             <div class="sidebar-header" id="current-server-name">
                 Global Community
             </div>
             <div class="channel-list scrollable flex-col" id="channels-list">
-                <!-- Dynamic channels injected here -->
+                <!-- Canais Injetados Aqui -->
             </div>
             <div class="user-controls">
                 <div class="avatar" id="my-avatar">V</div>
                 <div class="user-info">
-                    <div class="user-name" id="my-name">User</div>
+                    <div class="user-name" id="my-name">Utilizador</div>
                     <div class="user-status" id="my-status">Online</div>
                 </div>
                 <button class="settings-btn" onclick="openSettings()">
@@ -271,13 +309,13 @@
             </div>
         </div>
 
-        <!-- Main Chat Area -->
+        <!-- Área Central de Chat -->
         <div class="chat-area flex-col">
             <div class="chat-header">
                 <div class="chat-title">
                     <i class="ph-bold ph-list" id="mobile-menu" style="display:none;" onclick="document.getElementById('channels-sidebar').classList.toggle('open')"></i>
                     <i class="ph-bold ph-hash"></i>
-                    <span id="current-channel-name">general</span>
+                    <span id="current-channel-name">geral</span>
                 </div>
                 <div class="header-actions">
                     <button class="action-btn"><i class="ph-bold ph-magnifying-glass"></i></button>
@@ -285,59 +323,97 @@
             </div>
             
             <div class="chat-messages scrollable" id="chat-messages">
-                <!-- Dynamic messages injected here -->
+                <!-- Mensagens Injetadas Aqui -->
             </div>
 
             <div class="chat-input-wrapper">
                 <div class="chat-input-box">
                     <button class="action-btn"><i class="ph-bold ph-plus-circle"></i></button>
-                    <input type="text" id="msg-input" placeholder="Message #general" onkeypress="handleKeyPress(event)">
+                    <input type="text" id="msg-input" placeholder="Mensagem #geral" onkeypress="handleKeyPress(event)">
                     <button class="action-btn" onclick="sendMessage()"><i class="ph-bold ph-paper-plane-right"></i></button>
                 </div>
             </div>
         </div>
+
+        <!-- Barra Direita (Membros) -->
+        <div class="members-sidebar hidden-mobile" id="members-sidebar">
+            <div class="members-header">
+                Membros da Comunidade
+            </div>
+            <div class="member-list scrollable" id="members-list">
+                <!-- Membros dinâmicos serão injetados aqui -->
+            </div>
+        </div>
     </div>
 
-    <!-- SETTINGS MODAL -->
+    <!-- MODAL DE DEFINIÇÕES -->
     <div class="modal-overlay" id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>User Settings</h2>
+                <h2>Definições do Utilizador</h2>
                 <button class="modal-close" onclick="closeSettings()"><i class="ph-bold ph-x"></i></button>
             </div>
             <div class="form-group">
-                <label>Display Name</label>
+                <label>URL do Avatar (Imagem)</label>
+                <input type="text" id="set-avatar" class="form-input" placeholder="https://link-da-sua-imagem.com/foto.jpg">
+            </div>
+            <div class="form-group">
+                <label>Nome de Exibição</label>
                 <input type="text" id="set-display-name" class="form-input">
             </div>
             <div class="form-group">
-                <label>Bio</label>
+                <label>Biografia</label>
                 <input type="text" id="set-bio" class="form-input">
             </div>
             <div class="form-group">
                 <label>Status</label>
                 <select id="set-status" class="form-input">
                     <option value="Online">Online</option>
-                    <option value="Idle">Idle</option>
-                    <option value="Do Not Disturb">Do Not Disturb</option>
+                    <option value="Idle">Ausente</option>
+                    <option value="Do Not Disturb">Não Incomodar</option>
                 </select>
             </div>
             <div class="flex justify-between" style="margin-top: 24px;">
-                <button class="btn-primary" style="background: var(--danger); width: 45%;" onclick="logout()">Logout</button>
-                <button class="btn-primary" style="width: 45%;" onclick="saveSettings()">Save</button>
+                <button class="btn-primary" style="background: var(--danger); width: 45%;" onclick="logout()">Sair</button>
+                <button class="btn-primary" style="width: 45%;" onclick="saveSettings()">Salvar</button>
             </div>
         </div>
     </div>
 
-    <!-- SOCKET.IO CLIENT -->
+    <!-- MODAL DO PERFIL DO UTILIZADOR -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-content">
+            <div class="modal-header" style="position: absolute; right: 16px; top: 16px; z-index: 10; margin-bottom: 0;">
+                <button class="modal-close" onclick="closeProfile()"><i class="ph-bold ph-x" style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"></i></button>
+            </div>
+            <div class="profile-banner">
+                <div class="profile-modal-avatar" id="prof-avatar">U</div>
+            </div>
+            <div class="profile-details">
+                <div class="profile-name" id="prof-name">Nome do Utilizador</div>
+                <div class="profile-username" id="prof-username">@username</div>
+                <div class="form-group">
+                    <label>Sobre mim</label>
+                    <div class="profile-bio-box" id="prof-bio">Nenhuma biografia definida.</div>
+                </div>
+                <div class="form-group">
+                    <label>Status Atual</label>
+                    <div class="profile-bio-box" id="prof-status">Online</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLIENTE SOCKET.IO & LÓGICA -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // --- APP STATE ---
+        // --- ESTADO DA APP ---
         let currentUser = null;
         let currentServer = null;
         let currentChannel = null;
         let socket = null;
 
-        // --- INIT ---
+        // --- INICIALIZAÇÃO ---
         document.addEventListener('DOMContentLoaded', async () => {
             if (window.innerWidth <= 768) {
                 document.getElementById('mobile-menu').style.display = 'block';
@@ -351,7 +427,7 @@
             const res = await fetch(endpoint, options);
             if (!res.ok) {
                 const data = await res.json().catch(()=>({}));
-                throw new Error(data.error || 'API Error');
+                throw new Error(data.error || 'Erro na API');
             }
             return res.json();
         }
@@ -371,7 +447,7 @@
             }
         }
 
-        // --- AUTH LOGIC ---
+        // --- LÓGICA DE AUTENTICAÇÃO ---
         function toggleAuth(type) {
             document.getElementById('login-form').classList.toggle('hidden', type !== 'login');
             document.getElementById('register-form').classList.toggle('hidden', type !== 'register');
@@ -411,23 +487,40 @@
             location.reload();
         }
 
-        // --- CORE LOGIC ---
+        // --- LÓGICA PRINCIPAL ---
         function showApp() {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('app-layout').classList.remove('hidden');
             
-            // Populate User Info
+            // Popular informações do utilizador
             document.getElementById('my-name').textContent = currentUser.display_name;
-            document.getElementById('my-avatar').textContent = currentUser.display_name.charAt(0);
+            updateAvatarEl('my-avatar', currentUser.avatar, currentUser.display_name);
             document.getElementById('my-status').textContent = currentUser.status || 'Online';
         }
 
+        // Ajudantes para o Avatar
+        function updateAvatarEl(elementId, avatarUrl, fallbackName) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            if (avatarUrl && avatarUrl.startsWith('http')) {
+                el.innerHTML = `<img src="${escapeHTML(avatarUrl)}" alt="Avatar">`;
+            } else {
+                el.textContent = fallbackName ? fallbackName.charAt(0).toUpperCase() : 'U';
+            }
+        }
+
+        function renderAvatarHTML(avatarUrl, fallbackName) {
+            if (avatarUrl && avatarUrl.startsWith('http')) {
+                return `<img src="${escapeHTML(avatarUrl)}" alt="Avatar">`;
+            }
+            return fallbackName ? escapeHTML(fallbackName.charAt(0).toUpperCase()) : 'U';
+        }
+
         async function initApp() {
-            // Setup Sockets
             socket = io();
             socket.on('new_message', appendMessage);
+            socket.on('user_status', updateMemberStatus);
             
-            // Load Servers
             const servers = await api('/api/servers');
             renderServers(servers);
             if (servers.length > 0) {
@@ -435,10 +528,8 @@
             }
         }
 
-        // --- UI RENDERERS ---
         function renderServers(servers) {
             const list = document.getElementById('servers-list');
-            // Keep the home button and separator
             list.innerHTML = `
                 <div class="server-icon brand" title="Vynxgram Home"><i class="ph-fill ph-planet"></i></div>
                 <div class="separator"></div>
@@ -455,7 +546,6 @@
                 };
                 list.appendChild(el);
             });
-            // Auto select first
             if(list.children[2]) list.children[2].classList.add('active');
         }
 
@@ -482,17 +572,62 @@
                     selectChannel(c);
                 }
             });
+
+            // Carrega os membros na barra direita
+            loadMembers(server.id);
+        }
+
+        async function loadMembers(serverId) {
+            try {
+                const members = await api(`/api/servers/${serverId}/members`);
+                const list = document.getElementById('members-list');
+                list.innerHTML = '';
+                
+                members.forEach(m => {
+                    const el = document.createElement('div');
+                    el.className = 'member-item';
+                    el.id = `member-${m.id}`;
+                    el.onclick = () => openProfile(m.id);
+                    
+                    const avatarContent = renderAvatarHTML(m.avatar, m.display_name);
+                    
+                    el.innerHTML = `
+                        <div class="member-avatar">${avatarContent}</div>
+                        <div class="member-info">
+                            <span class="member-name">${escapeHTML(m.display_name)}</span>
+                            <span class="member-status-text">${escapeHTML(m.status || 'Offline')}</span>
+                        </div>
+                        <div class="status-dot ${m.status || 'Offline'}"></div>
+                    `;
+                    list.appendChild(el);
+                });
+            } catch (err) {
+                console.error("Erro ao carregar membros", err);
+            }
+        }
+
+        function updateMemberStatus(data) {
+            const memberEl = document.getElementById(`member-${data.userId}`);
+            if (memberEl) {
+                const statusDot = memberEl.querySelector('.status-dot');
+                const statusText = memberEl.querySelector('.member-status-text');
+                
+                if (statusDot) {
+                    statusDot.className = `status-dot ${data.status}`;
+                }
+                if (statusText) {
+                    statusText.textContent = data.status;
+                }
+            }
         }
 
         async function selectChannel(channel) {
             currentChannel = channel;
             document.getElementById('current-channel-name').textContent = channel.name;
-            document.getElementById('msg-input').placeholder = `Message #${channel.name}`;
+            document.getElementById('msg-input').placeholder = `Mensagem #${channel.name}`;
             
-            // Tell socket we joined
             socket.emit('join_channel', channel.id);
             
-            // Load messages
             const messages = await api(`/api/channels/${channel.id}/messages`);
             const container = document.getElementById('chat-messages');
             container.innerHTML = '';
@@ -500,17 +635,14 @@
             scrollToBottom();
         }
 
-        // --- MESSAGING ---
         function escapeHTML(str) {
             return str.replace(/[&<>'"]/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag]));
         }
 
         function formatMessage(text) {
             let safe = escapeHTML(text);
-            // Basic markdown
             safe = safe.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
             safe = safe.replace(/\*(.*?)\*/g, '<i>$1</i>');
-            // FIX: Using `{3} to prevent the generation from breaking
             safe = safe.replace(/`{3}([\s\S]*?)`{3}/g, '<pre style="background:var(--bg-dark);padding:8px;border-radius:4px;margin-top:4px;"><code>$1</code></pre>');
             return safe;
         }
@@ -523,11 +655,13 @@
             const el = document.createElement('div');
             el.className = `message ${isSelf ? 'self' : ''}`;
             
+            const avatarContent = renderAvatarHTML(msg.avatar, msg.display_name);
+            
             el.innerHTML = `
-                <div class="msg-avatar">${msg.display_name.charAt(0)}</div>
+                <div class="msg-avatar" style="cursor:pointer;" onclick="openProfile('${msg.user_id}')" title="Ver Perfil">${avatarContent}</div>
                 <div class="msg-content-wrapper">
                     <div class="msg-header">
-                        <span class="msg-author">${msg.display_name}</span>
+                        <span class="msg-author" style="cursor:pointer;" onclick="openProfile('${msg.user_id}')">${escapeHTML(msg.display_name)}</span>
                         <span class="msg-time">${time}</span>
                     </div>
                     <div class="msg-bubble">${formatMessage(msg.content)}</div>
@@ -562,8 +696,9 @@
             input.focus();
         }
 
-        // --- SETTINGS ---
+        // --- DEFINIÇÕES ---
         function openSettings() {
+            document.getElementById('set-avatar').value = currentUser.avatar || '';
             document.getElementById('set-display-name').value = currentUser.display_name;
             document.getElementById('set-bio').value = currentUser.bio || '';
             document.getElementById('set-status').value = currentUser.status || 'Online';
@@ -575,19 +710,45 @@
         }
         
         async function saveSettings() {
+            const avatar = document.getElementById('set-avatar').value;
             const dName = document.getElementById('set-display-name').value;
             const bio = document.getElementById('set-bio').value;
             const status = document.getElementById('set-status').value;
             try {
-                await api('/api/profile', 'POST', { display_name: dName, bio, status });
+                await api('/api/profile', 'POST', { display_name: dName, bio, status, avatar });
                 currentUser.display_name = dName;
                 currentUser.bio = bio;
                 currentUser.status = status;
+                currentUser.avatar = avatar;
+                
                 document.getElementById('my-name').textContent = dName;
-                document.getElementById('my-avatar').textContent = dName.charAt(0);
+                updateAvatarEl('my-avatar', avatar, dName);
                 document.getElementById('my-status').textContent = status;
                 closeSettings();
-            } catch(e) { alert('Failed to save settings'); }
+
+                if (currentServer) loadMembers(currentServer.id);
+            } catch(e) { alert('Falha ao guardar as definições'); }
+        }
+
+        // --- VER PERFIL ---
+        async function openProfile(userId) {
+            try {
+                const user = await api(`/api/users/${userId}`);
+                document.getElementById('prof-name').textContent = user.display_name;
+                document.getElementById('prof-username').textContent = `@${user.username}`;
+                document.getElementById('prof-bio').textContent = user.bio || 'Nenhuma biografia definida.';
+                document.getElementById('prof-status').textContent = user.status || 'Offline';
+                
+                updateAvatarEl('prof-avatar', user.avatar, user.display_name);
+                
+                document.getElementById('profile-modal').classList.add('active');
+            } catch (e) {
+                console.error("Erro ao carregar perfil", e);
+            }
+        }
+
+        function closeProfile() {
+            document.getElementById('profile-modal').classList.remove('active');
         }
     </script>
 </body>
